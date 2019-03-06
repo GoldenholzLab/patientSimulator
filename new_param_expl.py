@@ -595,7 +595,7 @@ def init_central_point(init_param_boundaries, decimal_precision):
 
 
 def algorithm(init_param_boundaries, central_point_deltas, decimal_precision, num_iter, num_patients_per_iter, 
-              max_iter, target_values, max_tolerable_error, journey_flag, output_file_name):
+              max_iter, target_values, max_tolerable_error, journey_flag, output_file_name, output_folder):
     '''
     
     This function is the function which implements the entire algorithm.
@@ -652,6 +652,10 @@ def algorithm(init_param_boundaries, central_point_deltas, decimal_precision, nu
             A string which is the nameof the file to which the output will be written, the output being the set of
             
             parameters that the algorithm stops at
+
+        10) output_folder:
+
+            A string which is the name of the folder where the output file should be stored in
             
     Outputs:
         
@@ -711,7 +715,7 @@ def algorithm(init_param_boundaries, central_point_deltas, decimal_precision, nu
     else:
         print('\n\nreached end of computation')
     
-    with open(output_file_name, 'w+') as output_file:
+    with open(output_folder + '/' + output_file_name, 'w+') as output_file:
         
         output_file.write( 'minimum cost: ' + str(min_error) + ', point: ' + str(central_point) )
 
@@ -761,6 +765,8 @@ if (__name__ == '__main__'):
         raise ValueError('20th argument to new_param_expl.py needs to be a boolean value')
         
     output_file_name = arg_array[20]
+
+    output_folder = arg_array[21]
     
     ''''
     shape_lower_Boundary_init = 10
@@ -799,5 +805,5 @@ if (__name__ == '__main__'):
                              [beta_lower_Boundary_init, beta_upper_Boundary_init]]
     
     algorithm(init_param_boundaries, central_point_deltas, decimal_precision, num_iter, num_patients_per_iter, 
-              max_iter, target_values, max_tolerable_error, journey_flag, output_file_name)
+              max_iter, target_values, max_tolerable_error, journey_flag, output_file_name, output_folder)
 
