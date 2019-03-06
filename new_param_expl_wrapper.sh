@@ -11,8 +11,9 @@
 #SBATCH --mail-user=jromero5@bidmc.harvard.edu
 
 module load gcc/6.2.0
+module load conda2/4.2.13
 module load python/3.6.0
-source /home/jmr95/python_stuff/param_expl/paramExplEnv/bin/activate
+source activate main_env
 
 inputs[1]=10
 inputs[2]=200
