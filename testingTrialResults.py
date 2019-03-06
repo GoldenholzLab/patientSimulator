@@ -885,12 +885,12 @@ drugEffectSD = 0
 placeboEffect = 0
 
 # randomized clinical trial parameters
-numScreening = 8
-screeningMinSzs = 1
+numScreening = 0
+screeningMinSzs = 0
 screeningIntervalSize = 1  
 screeningIntervalMinSzs = 0
 
-baseTotalMinSzs = 3
+baseTotalMinSzs = 4
 baseIntervalSize = 1
 baseIntervalMinSzs = 0
 baseSzFree = 0
@@ -910,12 +910,13 @@ _pSD = 369.628
 # directory to save images to 
 image_dir = '/Users/juanromero/Documents/Articles of Interest/Randomized Clinical Trials'
 
-'''
+
+baseTotalMinSzs = 0
 numPlaceboPatients = 10000
 numDrugPatients = 0
 numBase = 8
 numTestMin = 24
-numTestMax = 121
+numTestMax = 120
 uniform = False
 
 
@@ -925,13 +926,12 @@ uniform = False
 
 plotPatients(placeboArm.allSzs, image_dir)
 plotPatientWeeks(placeboArm.allSzs[0], image_dir)
-'''
 
 # number of patients for both arms were taken from trial, and then 50/50 split was provided
-numPlaceboPatients = 45
-numDrugPatients = 1
+numPlaceboPatients = 153
+numDrugPatients = 153
 numBase = 8
-numTestMin = 11
+numTestMin = 12
 numTestMax = 12
 uniform = True
 pValueRound = 5
@@ -945,4 +945,3 @@ trials = sampleMeanAndStandardDevation(_n, _nSD, _p, _pSD, drugEffect, placeboEf
                               baseTotalMinSzs, baseIntervalSize, baseIntervalMinSzs, baseSzFree, uniform,num_trials, image_dir, genAggValueRound)
 
 plotRR50AndMPC(trials[0][0], trials[0][1], genValueRound, pValueRound, image_dir, box)
-
