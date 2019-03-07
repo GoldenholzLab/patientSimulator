@@ -16,34 +16,27 @@ class TrialArm(Patient):
     
     Input class variables
     
-        1. n
+        1. shape
         
-            (optional) (int) {>=1} - integer parameter of negative binomial generation; n-1 = number of successes
-                Default: 0.5625
+            (float) - first group level parameter for the NV model
                 
-        2. nSD
+        2. scale
         
-            (optional) (float or int) {>=0} - parameters if n is to have variability following a normal/gaussian distribution
+            (float) - second group level parameter for the NV model
                 
-                Default: 0.0875
-                
-        3. p
+        3. alpha
         
-            (optional) (float) {>= 0 & <=1} - parameter of negative binomial generation where p is the probability of success
-                
-                Default: 
+            (float) - third group level parameter for the MV model
                     
-        4. pSD
+        4. beta
         
-            (optional) (float or int) {>=0} - parameters if p is to have variability following a normal/gaussian distribution
-                
-                Default: 
+            (float) - fourth gropu level parameter for the NV model
                     
         5. drugEffect
         
             (optional) (float) {>=-1 & <=+1} - drug effectiveness; input should be decimal - eg 50% imput as .5
                 
-                efault: 0 - No effect
+                default: 0 - No effect
                 
         6. drugEffectSD
         
@@ -156,7 +149,7 @@ class TrialArm(Patient):
     '''
 
 
-    def __init__(self, n=1.125, nSD=.175, p=0.5, pSD=.05, drugEffect=0, drugEffectSD=0, numScreening=0, numBase=4, numTestMin=5, 
+    def __init__(self, shape, scale, alpha, beta, drugEffect=0, drugEffectSD=0, numScreening=0, numBase=4, numTestMin=5, 
                  
                  numTestMax=5, numPatients=200, screeningMinSzs=0, screeningIntervalSize=1, screeningIntervalMinSzs=0, baseTotalMinSzs=1, 
                  
@@ -173,10 +166,10 @@ class TrialArm(Patient):
         
         '''
         #input cleaning and variable declaration
-        self.n = abs(n)
-        self.nSD = abs(nSD)
-        self.p = p
-        self.pSD = abs(pSD)
+        self.shape = scale
+        self.shape = shape
+        self.alpha = alpha
+        self.beta = beta
         
         # if the absolute value of drug effect is too large, sets it to the largest allowed value
         if drugEffect >=1: self.drugEffect = .999999999
@@ -226,8 +219,8 @@ class TrialArm(Patient):
         #checks and returns the patient if it fulfills the minimum seizure requirement, else, generate a new patient 
         while True:
             
-            current_n = np.random.gamma(self.n, 1/self.nSD)
-            current_p = np.random.beta(self.p, self.pSD)
+            current_n = np.random.gamma(self.shape, 1/self.scale)
+            current_p = np.random.beta(self.alpha, self.beta)
             
             if(self.uniform):
                 
