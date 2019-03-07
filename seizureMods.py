@@ -1,7 +1,13 @@
 import numpy as np
 
 '''
-This script holds utility functions for modifying seizure diaries. applyDrug reduces (or adds) seizures to the test period depending on the effectiveness of the drug. It has an associated private function __applyDrugInternal. testCriteria checks screening and baseline seizure counts to endure that they comply with certain parameters. If also has an associated private function __testCriteraInternal.
+This script holds utility functions for modifying seizure diaries. 
+
+applyDrug reduces (or adds) seizures to the test period depending on the effectiveness of the drug. 
+
+It has an associated private function __applyDrugInternal. testCriteria checks screening and baseline seizure counts to endure that they comply with certain parameters. 
+
+If also has an associated private function __testCriteraInternal.
 '''
 
 def applyDrug(szCounts, numTest, drugEffect):
