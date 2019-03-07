@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 30 13:35:52 2018
+'''
 
-@author: juanromero
-"""
+This is the main script for this repository. It generates all the data and creates the graphs to
+
+interpret the data.
+
+'''
 
 from TrialArmClass import TrialArm
 import RR50Test
@@ -211,7 +211,7 @@ def plotPatientWeeks(patient, image_dir):
     fig3.savefig(fname = image_dir + '/Romero-fig3', dpi = 600, bbox_inches = 'tight')
 
 
-def generateTrial(_n, _nSD, _p, _pSD, _drugEffect, _placeboEffect, _drugEffectSD, _numScreening, _numBase, _numTestMin, _numTestMax, 
+def generateTrial(shape, scale, alpha, beta, _drugEffect, _placeboEffect, _drugEffectSD, _numScreening, _numBase, _numTestMin, _numTestMax, 
                     _numPlaceboPatients, _numDrugPatients, _screeningMinSzs, _screeningIntervalSize, _screeningIntervalMinSzs, _baseTotalMinSzs,
                     _baseIntervalSize, _baseIntervalMinSzs, _baseSzFree, _uniform):
     '''
@@ -224,28 +224,21 @@ def generateTrial(_n, _nSD, _p, _pSD, _drugEffect, _placeboEffect, _drugEffectSD
     
     Input:
     
-        1. _n
+        1. shape
         
-            (optional) (int) {>=1} - integer parameter of negative binomial generation; n-1 = number of successes
-                Default: 0.5625
+            (float) - first group level parameter for the NV model
                 
-        2. _nSD
+        2. scale
         
-            (optional) (float or int) {>=0} - parameters if n is to have variability following a normal/gaussian distribution
+            (float) - second group level parameter for the NV model
                 
-                Default: 0.0875
-                
-        3. _p
+        3. alpha
         
-            (optional) (float) {>= 0 & <=1} - parameter of negative binomial generation where p is the probability of success
-                
-                Default: 
+            (float) - third group level parameter for the MV model
                     
-        4. _pSD
+        4. beta
         
-            (optional) (float or int) {>=0} - parameters if p is to have variability following a normal/gaussian distribution
-                
-                Default: 
+            (float) - fourth gropu level parameter for the NV model
                     
         5. _drugEffect
         
@@ -367,14 +360,14 @@ def generateTrial(_n, _nSD, _p, _pSD, _drugEffect, _placeboEffect, _drugEffectSD
     '''
     
     # generate the TrialArm object corresponding to all the placebo patients
-    placeboArm = TrialArm(n=_n, nSD=_nSD, p=_p, pSD=_pSD, drugEffect = _placeboEffect, drugEffectSD=_drugEffectSD, 
+    placeboArm = TrialArm(n=shape, nSD=scale, p=alpha, pSD=beta, drugEffect = _placeboEffect, drugEffectSD=_drugEffectSD, 
                      numScreening=_numScreening, numBase=_numBase, numTestMin=_numTestMin, numTestMax=_numTestMax, 
                      numPatients=_numPlaceboPatients, screeningMinSzs=_screeningMinSzs, screeningIntervalSize=_screeningIntervalSize, 
                      screeningIntervalMinSzs=_screeningIntervalMinSzs, baseTotalMinSzs=_baseTotalMinSzs, baseIntervalSize=_baseIntervalSize, 
                      baseIntervalMinSzs=_baseIntervalMinSzs, baseSzFree=_baseSzFree, uniform = _uniform)
     
     # generate the TrialArm object corresponding to all the drug patients
-    drugArm = TrialArm(n=_n, nSD=_nSD, p=_p, pSD=_pSD, drugEffect = _drugEffect + _placeboEffect, drugEffectSD=_drugEffectSD, 
+    drugArm = TrialArm(n=shape, nSD=scale, p=alpha, pSD=beta, drugEffect = _drugEffect + _placeboEffect, drugEffectSD=_drugEffectSD, 
                      numScreening=_numScreening, numBase=_numBase, numTestMin=_numTestMin, numTestMax=_numTestMax, 
                      numPatients=_numDrugPatients, screeningMinSzs=_screeningMinSzs, screeningIntervalSize=_screeningIntervalSize, 
                      screeningIntervalMinSzs=_screeningIntervalMinSzs, baseTotalMinSzs=_baseTotalMinSzs, baseIntervalSize=_baseIntervalSize, 
@@ -383,7 +376,7 @@ def generateTrial(_n, _nSD, _p, _pSD, _drugEffect, _placeboEffect, _drugEffectSD
     return [placeboArm, drugArm]
 
 
-def sampleMeanAndStandardDevation(_n, _nSD, _p, _pSD, drugEffect, placeboEffect, drugEffectSD, numScreening, numBase, numTestMin, numTestMax,
+def sampleMeanAndStandardDevation(shape, scale, alpha, beta, drugEffect, placeboEffect, drugEffectSD, numScreening, numBase, numTestMin, numTestMax,
                                         numPlaceboPatients, numDrugPatients, screeningMinSzs, screeningIntervalSize, screeningIntervalMinSzs, 
                                         baseTotalMinSzs, baseIntervalSize, baseIntervalMinSzs, baseSzFree, uniform, num_trials, data_dir,
                                         genAggValueRound):
@@ -395,28 +388,21 @@ def sampleMeanAndStandardDevation(_n, _nSD, _p, _pSD, drugEffect, placeboEffect,
     
     Input:
     
-        1. _n
+        1. shape
         
-            (optional) (int) {>=1} - integer parameter of negative binomial generation; n-1 = number of successes
-                Default: 0.5625
+            (float) - first group level parameter for the NV model
                 
-        2. _nSD
+        2. scale
         
-            (optional) (float or int) {>=0} - parameters if n is to have variability following a normal/gaussian distribution
+            (float) - second group level parameter for the NV model
                 
-                Default: 0.0875
-                
-        3. _p
+        3. alpha
         
-            (optional) (float) {>= 0 & <=1} - parameter of negative binomial generation where p is the probability of success
-                
-                Default: 
+            (float) - third group level parameter for the MV model
                     
-        4. _pSD
+        4. beta
         
-            (optional) (float or int) {>=0} - parameters if p is to have variability following a normal/gaussian distribution
-                
-                Default: 
+            (float) - fourth gropu level parameter for the NV model
                     
         5. _drugEffect
         
@@ -559,7 +545,7 @@ def sampleMeanAndStandardDevation(_n, _nSD, _p, _pSD, drugEffect, placeboEffect,
     for i in range(num_trials):
         
         # calculate a specific trial
-        [placeboArm, drugArm] = generateTrial(_n, _nSD, _p, _pSD, drugEffect, placeboEffect, drugEffectSD, numScreening, numBase, numTestMin, numTestMax,
+        [placeboArm, drugArm] = generateTrial(shape, scale, alpha, beta, drugEffect, placeboEffect, drugEffectSD, numScreening, numBase, numTestMin, numTestMax,
                                                 numPlaceboPatients, numDrugPatients, screeningMinSzs, screeningIntervalSize, screeningIntervalMinSzs, 
                                                 baseTotalMinSzs, baseIntervalSize, baseIntervalMinSzs, baseSzFree, uniform)
         
@@ -896,10 +882,10 @@ baseIntervalMinSzs = 0
 baseSzFree = 0
 
 # group level parameters
-_n = 24.143
-_nSD = 297.366
-_p = 284.024
-_pSD = 369.628
+shape = 24.143
+scale = 297.366
+alpha = 284.024
+beta = 369.628
 
 
 ############
@@ -920,7 +906,7 @@ numTestMax = 120
 uniform = False
 
 
-[placeboArm, _] = generateTrial(_n, _nSD, _p, _pSD, 0, placeboEffect, 0, numScreening, numBase, numTestMin, numTestMax,
+[placeboArm, _] = generateTrial(shape, scale, alpha, beta, 0, placeboEffect, 0, numScreening, numBase, numTestMin, numTestMax,
                                         numPlaceboPatients, numDrugPatients, screeningMinSzs, screeningIntervalSize, screeningIntervalMinSzs, 
                                         baseTotalMinSzs, baseIntervalSize, baseIntervalMinSzs, baseSzFree, uniform)
 
