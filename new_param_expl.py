@@ -1,10 +1,12 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jan  2 12:46:55 2019
+'''
 
-@author: juanromero
-"""
+This script represents one search across the paramter space of the group level parameters for the 
+
+optimal parameters which yield a synthetic population  that have a median monthly seizure frequency
+
+and a log-log slope that are close to the target values. 
+
+'''
 
 import numpy as np
 import pandas as pd
