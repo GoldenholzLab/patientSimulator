@@ -38,4 +38,4 @@ inputs[20]=True
 inputs[21]=$1
 inputs[22]='/n/scratch2/jmr95/parameter_optimization'
 
-srun -c 1 python new_param_expl.py ${inputs[@]}
+srun -c 1 python param_expl.py ${inputs[@]}

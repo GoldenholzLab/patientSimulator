@@ -722,9 +722,11 @@ def algorithm(init_param_boundaries, central_point_deltas, decimal_precision, nu
         output_file.write( 'minimum cost: ' + str(min_error) + ', point: ' + str(central_point) )
 
 
-
+# this if-statement is the main body of this script: it takes inputs from the command line
+# arguments and uses them to initialize the 
 if (__name__ == '__main__'):
     
+    # extract the array which has the command
     parser = argparse.ArgumentParser()
     parser.add_argument('array', nargs = '+')
     args = parser.parse_args()

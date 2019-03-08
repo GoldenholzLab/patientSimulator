@@ -1,8 +1,8 @@
 '''
 
-This is the main script for this repository. It generates all the data and creates the graphs to
+This is the main script for this repository. It generates synthetic patients in order to create graphs for the
 
-interpret the data.
+main paper associated with this article.
 
 '''
 
@@ -360,14 +360,14 @@ def generateTrial(shape, scale, alpha, beta, _drugEffect, _placeboEffect, _drugE
     '''
     
     # generate the TrialArm object corresponding to all the placebo patients
-    placeboArm = TrialArm(n=shape, nSD=scale, p=alpha, pSD=beta, drugEffect = _placeboEffect, drugEffectSD=_drugEffectSD, 
+    placeboArm = TrialArm(shape=shape, scale=scale, alpha=alpha, beta=beta, drugEffect = _placeboEffect, drugEffectSD=_drugEffectSD, 
                      numScreening=_numScreening, numBase=_numBase, numTestMin=_numTestMin, numTestMax=_numTestMax, 
                      numPatients=_numPlaceboPatients, screeningMinSzs=_screeningMinSzs, screeningIntervalSize=_screeningIntervalSize, 
                      screeningIntervalMinSzs=_screeningIntervalMinSzs, baseTotalMinSzs=_baseTotalMinSzs, baseIntervalSize=_baseIntervalSize, 
                      baseIntervalMinSzs=_baseIntervalMinSzs, baseSzFree=_baseSzFree, uniform = _uniform)
     
     # generate the TrialArm object corresponding to all the drug patients
-    drugArm = TrialArm(n=shape, nSD=scale, p=alpha, pSD=beta, drugEffect = _drugEffect + _placeboEffect, drugEffectSD=_drugEffectSD, 
+    drugArm = TrialArm(shape=shape, scale=scale, alpha=alpha, beta=beta, drugEffect = _drugEffect + _placeboEffect, drugEffectSD=_drugEffectSD, 
                      numScreening=_numScreening, numBase=_numBase, numTestMin=_numTestMin, numTestMax=_numTestMax, 
                      numPatients=_numDrugPatients, screeningMinSzs=_screeningMinSzs, screeningIntervalSize=_screeningIntervalSize, 
                      screeningIntervalMinSzs=_screeningIntervalMinSzs, baseTotalMinSzs=_baseTotalMinSzs, baseIntervalSize=_baseIntervalSize, 
@@ -926,7 +926,7 @@ genAggValueRound = 2
 num_trials = 5000
 box = 'tight'
 
-trials = sampleMeanAndStandardDevation(_n, _nSD, _p, _pSD, drugEffect, placeboEffect, drugEffectSD, numScreening, numBase, numTestMin, numTestMax,
+trials = sampleMeanAndStandardDevation(shape, scale, alpha, beta, drugEffect, placeboEffect, drugEffectSD, numScreening, numBase, numTestMin, numTestMax,
                               numPlaceboPatients, numDrugPatients, screeningMinSzs, screeningIntervalSize, screeningIntervalMinSzs, 
                               baseTotalMinSzs, baseIntervalSize, baseIntervalMinSzs, baseSzFree, uniform,num_trials, image_dir, genAggValueRound)
 

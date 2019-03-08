@@ -5,7 +5,9 @@ from scipy import stats
 
 '''
 
+This script generates patients for the parameter optimization scripts, and is not used by the testingTrialResults.py
 
+script.
 
 '''
 

@@ -12,5 +12,5 @@
 
 for ((i=1; i<1000; i=i+1));
 do
-    sbatch new_param_expl_wrapper.sh $i.txt
+    sbatch param_expl_wrapper.sh $i.txt
 done
