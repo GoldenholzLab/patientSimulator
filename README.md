@@ -3,14 +3,29 @@ synthetic patient seizure diary simulator and RCT simulator
 
 WHAT IS THIS REPOSITORY FOR?:
 
+    This repository is meant
 
 In order to generate one patient:
 
+    The PatientClass.py script is responsible for generating one synthetic patient. In order to use this code 
+    in a customized script, the PatientClass.py script must be imported as 'from PatientClass import Patient'.
+    This will allow the customized script to instantiate a Patient object. The first four parameters inputted to
+    the initialization of the Patient object are the group level parameters for the NV model. It is recommended to
+    to use [PARAMETERS], which are the optimal parameters published in the [NAME] paper as according to NV model.
 
 In order to generate one trial:
 
+    The TrialArmClass script is responsible for generating one arm of a clinical trial consisiting of synthetic patients. 
+    In order to use this code in a customized script, the TrialArmClass.py script must be imported as 'from TrialArmClass 
+    import TrialArm'. This will allow the customized script to instantiate a TrialArm object. The first four parameters 
+    inputted to the initialization of the Patient object are the group level parameters for the NV model. It is recommended∂
+    to use [PARAMETERS], which are the optimal parameters published in the [NAME] paper as according to NV model.
 
 In order to generate the graphs associated with the [NAME HERE] paper:
+
+    The testingTrialResults.py script is responsible for generating the graphs in the NAME HERE] paper. All that needs to be 
+    done is to run it once, although it is not unusual for the script to take up to an hour in order to generate all the trials 
+    of synthetic patients needed for the RCT analysis.
 
 
 testingTrialResults.py
