@@ -166,8 +166,8 @@ class TrialArm(Patient):
         
         '''
         #input cleaning and variable declaration
-        self.shape = scale
         self.shape = shape
+        self.scale = scale
         self.alpha = alpha
         self.beta = beta
         

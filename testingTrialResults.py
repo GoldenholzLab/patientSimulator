@@ -882,10 +882,10 @@ baseIntervalMinSzs = 0
 baseSzFree = 0
 
 # group level parameters
-shape = 24.143
-scale = 297.366
-alpha = 284.024
-beta = 369.628
+shape = 111.313
+scale = 296.728
+alpha = 296.339
+beta = 243.719
 
 
 ############
@@ -900,9 +900,9 @@ image_dir = '/Users/juanromero/Documents/Articles of Interest/Randomized Clinica
 baseTotalMinSzs = 0
 numPlaceboPatients = 10000
 numDrugPatients = 0
-numBase = 8
-numTestMin = 24
-numTestMax = 120
+numBase = 90
+numTestMin = 90
+numTestMax = 91
 uniform = False
 
 
