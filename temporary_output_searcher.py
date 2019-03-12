@@ -6,6 +6,7 @@ error_file_names = '/*.err'
 
 error_file_names = output_directory + error_file_names
 output_file_names = []
+accepted_output_file_names = []
 error_file_names = glob.glob(error_file_names)
 costs = []
 
@@ -34,9 +35,10 @@ for output_file_name in output_file_names:
                 cost = float(line1.split(',')[4].split(']')[0])
                 print(cost)
                 costs.append(cost)
+                accepted_output_file_names.append(output_file_name)
     except IOError as exc:
         print(exc)
 
 index = np.argmin(costs)
 
-print('\n\n' + str(costs[index]) + '\n' + output_file_names[index] + '\n\n')
+print('\n\n' + str(costs[index]) + '\n' + accepted_output_file_names[index] + '\n\n')
