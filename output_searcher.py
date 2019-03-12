@@ -10,7 +10,7 @@ import glob
 import numpy as np
 
 
-output_directory = '/Users/juanromero/Documents/Python_3_Files/O2 learning Stuff/optimization code outputs'
+output_directory = '/n/scratch2/jmr95/parameter_optimization'
 file_names = '/*.txt'
 
 output_file_names = output_directory + file_names
