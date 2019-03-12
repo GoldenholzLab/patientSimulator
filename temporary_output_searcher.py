@@ -27,9 +27,10 @@ for output_file_name in output_file_names:
             lines = lines[0:10]
             lines.reverse()
             line1 = lines[2]
-            line2 = lines[8]
-            cost = float(line1.split(',')[4].split(']')[0])
-            costs.append(cost)
+            #line2 = lines[8]
+            print(line1.split(',')[4])
+            #cost = float(line1.split(',')[4].split(']')[0])
+            #costs.append(cost)
     except IOError as exc:
         print(exc)
 
