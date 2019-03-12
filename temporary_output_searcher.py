@@ -24,14 +24,7 @@ for output_file_name in output_file_names:
         with open(output_file_name, 'r') as output_file:
             lines = output_file.readlines()
             lines.reverse()
-            #print(lines[0])
-            #print(lines[1])
-            #print(lines[2])
-            print(lines[3])
-            #print(lines[4])
-            #print(lines[5])
-            '''
-            if(lines[3] == 'median estimate, slope estimate]:'):
+            if(lines[3] == 'median estimate, slope estimate]:\n\n'):
                 lines = lines[0:10]
                 lines.reverse()
                 line1 = lines[2]
@@ -40,7 +33,6 @@ for output_file_name in output_file_names:
                 #print(line1.split(','))
                 cost = float(line1.split(',')[4].split(']')[0])
                 costs.append(cost)
-            '''
     except IOError as exc:
         print(exc)
 
