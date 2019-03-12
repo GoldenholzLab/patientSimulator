@@ -125,7 +125,8 @@ def plotPatients(patients, image_dir):
     fig1 = plt.figure(1)
     ax1 = fig1.gca()
     plt.scatter(logMean, logStdDev, s = 0.5,  color = 'tab:cyan')
-    plt.xlim([-.4, 0.6])
+    #plt.xlim([-.4, 0.6])
+    plt.xlim([0, 1])
     plt.ylim([-.4, 1])
     
     # calculate and add line of best fit on log-log plot
@@ -158,7 +159,7 @@ def plotPatients(patients, image_dir):
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
     plt.axvline(x=dataMedian, color='k', linestyle='-')
-    plt.axvline(x=2.7, color='r', linestyle='--')
+    plt.axvline(x=8.5, color='r', linestyle='--')
     plt.legend(['median: ' + str( np.round(dataMedian, 2) ), 'target median: 2.7'], fontsize = 12)
     long_title = 'Histogram of monthly seizure frequencies (' + str( numPatients ) + ' patients)'
     formatted_title = '\n'.join(textwrap.wrap(long_title, 40))
@@ -726,8 +727,6 @@ def calculateRR50AndMPC(placeboArm, drugArm):
     
     '''
     
-    print('reached')
-    
     # extract the baseline placebo, test placebo, baseline drug, and test drug data
     placeboBase = placeboArm.basePatientSzs
     placeboTest = placeboArm.testPatientSzs
@@ -899,7 +898,7 @@ image_dir = '/Users/juanromero/Documents/Articles of Interest/Randomized Clinica
 
 baseTotalMinSzs = 0
 numPlaceboPatients = 10000
-numDrugPatients = 0
+numDrugPatients = 1
 numBase = 90
 numTestMin = 90
 numTestMax = 91
