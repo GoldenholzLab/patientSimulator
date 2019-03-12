@@ -32,11 +32,11 @@ for output_file_name in output_file_names:
                 #print(output_file_name )
                 #print(line1.split(','))
                 cost = float(line1.split(',')[4].split(']')[0])
-                print(costs)
+                print(cost)
                 costs.append(cost)
     except IOError as exc:
         print(exc)
 
 index = np.argmin(costs)
 
-print(output_file_names[index])
+print('\n\n' + str(cost) + '\n\n' + output_file_names[index])
