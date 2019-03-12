@@ -9,6 +9,7 @@ output_file_names = []
 accepted_output_file_names = []
 error_file_names = glob.glob(error_file_names)
 costs = []
+num_files = 0
 
 for error_file_name in error_file_names:
     try:
@@ -36,9 +37,10 @@ for output_file_name in output_file_names:
                 print(cost)
                 costs.append(cost)
                 accepted_output_file_names.append(output_file_name)
+                num_files = num_files + 1
     except IOError as exc:
         print(exc)
 
 index = np.argmin(costs)
 
-print('\n\n' + str(costs[index]) + '\n' + accepted_output_file_names[index] + '\n\n')
+print('\n\n' + str(num_files) + '\n' + str(costs[index]) + '\n' + accepted_output_file_names[index] + '\n\n')
