@@ -29,6 +29,7 @@ for output_file_name in output_file_names:
             line1 = lines[2]
             #line2 = lines[8]
             print(line1.split(',')[4])
+            print(output_file_name + '\n\n')
             #cost = float(line1.split(',')[4].split(']')[0])
             #costs.append(cost)
     except IOError as exc:
