@@ -23,8 +23,8 @@ for output_file_name in output_file_names:
     try:
         with open(output_file_name, 'r') as output_file:
             lines = output_file.readlines()
+            lines.reverse()
             if(lines[0] != 'step #: 59\n'):
-                lines.reverse()
                 lines = lines[0:10]
                 lines.reverse()
                 line1 = lines[2]
