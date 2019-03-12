@@ -28,8 +28,8 @@ for output_file_name in output_file_names:
             lines.reverse()
             line1 = lines[2]
             #line2 = lines[8]
-            print(output_file_name + '\n\n')
-            print(line1.split(',')[4])
+            print(output_file_name )
+            print(line1.split(',')[4] + '\n\n')
             #cost = float(line1.split(',')[4].split(']')[0])
             #costs.append(cost)
     except IOError as exc:
