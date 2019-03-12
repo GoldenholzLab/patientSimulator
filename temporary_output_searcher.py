@@ -24,12 +24,12 @@ for output_file_name in output_file_names:
         with open(output_file_name, 'r') as output_file:
             lines = output_file.readlines()
             lines.reverse()
-            print(lines[0])
-            print(lines[1])
-            print(lines[2])
-            print(lines[3])
+            #print(lines[0])
+            #print(lines[1])
+            #print(lines[2])
+            #print(lines[3])
             print(lines[4])
-            print(lines[5])
+            #print(lines[5])
             '''
             if(lines[3] == 'median estimate, slope estimate]:'):
                 lines = lines[0:10]
