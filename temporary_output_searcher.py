@@ -25,6 +25,7 @@ for output_file_name in output_file_names:
             lines = output_file.readlines()
             lines.reverse()
             if(lines[3] == 'median estimate, slope estimate]:'):
+                print('reached')
                 lines = lines[0:10]
                 lines.reverse()
                 line1 = lines[2]
@@ -36,4 +37,4 @@ for output_file_name in output_file_names:
     except IOError as exc:
         print(exc)
 
-print(np.argmin(costs))
+#print(np.argmin(costs))
