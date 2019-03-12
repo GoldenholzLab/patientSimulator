@@ -39,4 +39,4 @@ for output_file_name in output_file_names:
 
 index = np.argmin(costs)
 
-print('\n\n' + str(cost) + '\n' + output_file_names[index] + '\n\n')
+print('\n\n' + str(costs[index]) + '\n' + output_file_names[index] + '\n\n')
