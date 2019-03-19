@@ -159,8 +159,8 @@ def plotPatients(patients, image_dir):
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
     plt.axvline(x=dataMedian, color='k', linestyle='-')
-    plt.axvline(x=8.5, color='r', linestyle='--')
-    plt.legend(['median: ' + str( np.round(dataMedian, 2) ), 'target median: 2.7'], fontsize = 12)
+    plt.axvline(x=8.6, color='r', linestyle='--')
+    plt.legend(['median: ' + str( np.round(dataMedian, 2) ), 'target median:8.5'], fontsize = 12)
     long_title = 'Histogram of monthly seizure frequencies (' + str( numPatients ) + ' patients)'
     formatted_title = '\n'.join(textwrap.wrap(long_title, 40))
     plt.title(formatted_title, fontsize = 14)
@@ -865,7 +865,7 @@ def plotRR50AndMPC(placeboArm, drugArm, genValueRounding, pValueRounding, image_
 
 
 # important meta-parameters
-drugEffect = 0.20
+drugEffect = 0.2
 drugEffectSD = 0
 placeboEffect = 0
 
@@ -881,6 +881,13 @@ baseIntervalMinSzs = 0
 baseSzFree = 0
 
 # group level parameters
+
+'''
+shape= 24.143
+scale = 297.366
+alpha = 284.024
+beta = 369.628
+'''
 shape = 111.313
 scale = 296.728
 alpha = 296.339
@@ -896,7 +903,6 @@ beta = 243.719
 image_dir = '/Users/juanromero/Documents/Articles of Interest/Randomized Clinical Trials'
 
 
-baseTotalMinSzs = 0
 numPlaceboPatients = 10000
 numDrugPatients = 1
 numBase = 90
@@ -916,7 +922,7 @@ plotPatientWeeks(placeboArm.allSzs[0], image_dir)
 numPlaceboPatients = 153
 numDrugPatients = 153
 numBase = 8
-numTestMin = 12
+numTestMin = 11
 numTestMax = 12
 uniform = True
 pValueRound = 5
