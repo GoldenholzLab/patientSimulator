@@ -36,6 +36,6 @@ inputs[18]=3
 inputs[19]=-30
 inputs[20]=True
 inputs[21]=$1
-inputs[22]='/n/scratch2/jmr95/parameter_optimization'
+inputs[22]='/home/jmr95/patientSimulator/optimization_data'
 
 srun -c 1 python param_expl.py ${inputs[@]}
