@@ -26,7 +26,7 @@ class TrialArm(Patient):
                 
         3. alpha
         
-            (float) - third group level parameter for the MV model
+            (float) - third group level parameter for the NV model
                     
         4. beta
         
