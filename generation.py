@@ -74,10 +74,17 @@ def generateData(numPatients, shape, scale, alpha, beta):
         #if x%100 == 0: print('\n', pa.allSzs)
         '''
         
-        # changed the number of baseline weeks here
-        current_n = np.random.gamma(shape, 1/scale)
-        current_p = np.random.beta(alpha, beta)
-        pa = Patient(n=current_n, p=current_p, numBaseIntervals=12, numTestIntervals=0, drugEffect=0 )
+        acceptable_baseline = False
+        
+        while(not acceptable_baseline):
+            
+            current_n = np.random.gamma(shape, 1/scale)
+            current_p = np.random.beta(alpha, beta)
+            pa = Patient(n=current_n, p=current_p, numBaseIntervals=8, numTestIntervals=12, drugEffect=0 )
+            
+            if(np.sum(pa.allWeeklySzs[0:8]) >= 4):
+                
+                acceptable_baseline = True
 
         
         # if the mean/standard deviation of the two week seizure frequency is non-zero, adds the log10 of the two week seizure frequency
@@ -106,7 +113,7 @@ def generateData(numPatients, shape, scale, alpha, beta):
     #calculate line of best fit
     bestSlope, bestIntercept, bestRValue, bestPValue, bestStdError = stats.linregress(logMean, logStdDev)
     
-    #Juan: I added this if-else statement because of an error that keeps popping up for me
+    
     if(averageMonthFreq == None or averageMonthFreq == []):
         dataMedian = None
     else:
