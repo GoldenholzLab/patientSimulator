@@ -126,7 +126,7 @@ def plotPatients(patients, image_dir):
     ax1 = fig1.gca()
     plt.scatter(logMean, logStdDev, s = 0.5,  color = 'tab:cyan')
     #plt.xlim([-.4, 0.6])
-    plt.xlim([0, 1])
+    plt.xlim([-1, 4])
     plt.ylim([-.4, 1])
     
     # calculate and add line of best fit on log-log plot
@@ -153,13 +153,12 @@ def plotPatients(patients, image_dir):
     fig1.savefig(fname = image_dir + '/Romero-fig1', dpi = 600, bbox_inches = 'tight')
     
     # create histogram
-    
     fig2 = plt.figure(2)
     [data, bins, _] = plt.hist(averageMonthFreq, bins='auto', density=True, color = 'tab:cyan')
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
     plt.axvline(x=dataMedian, color='k', linestyle='-')
-    plt.axvline(x=8.6, color='r', linestyle='--')
+    plt.axvline(x=8.5, color='r', linestyle='--')
     plt.legend(['median: ' + str( np.round(dataMedian, 2) ), 'target median:8.5'], fontsize = 12)
     long_title = 'Histogram of monthly seizure frequencies (' + str( numPatients ) + ' patients)'
     formatted_title = '\n'.join(textwrap.wrap(long_title, 40))
@@ -888,10 +887,16 @@ scale = 297.366
 alpha = 284.024
 beta = 369.628
 '''
+'''
 shape = 111.313
 scale = 296.728
 alpha = 296.339
 beta = 243.719
+'''
+shape = 2.802
+scale = 50.155
+alpha = 59.361
+beta = 336.12
 
 
 ############
