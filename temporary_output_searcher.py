@@ -25,19 +25,20 @@ for output_file_name in output_file_names:
     try:
         with open(output_file_name, 'r') as output_file:
             lines = output_file.readlines()
-            lines.reverse()
-            if(lines[3] == 'median estimate, slope estimate]:\n'):
-                lines = lines[0:10]
+            if(len(lines) >= 3):
                 lines.reverse()
-                line1 = lines[2]
-                #line2 = lines[8]
-                #print(output_file_name )
-                #print(line1.split(','))
-                cost = float(line1.split(',')[4].split(']')[0])
-                print(cost)
-                costs.append(cost)
-                accepted_output_file_names.append(output_file_name)
-                num_files = num_files + 1
+                if(lines[3] == 'median estimate, slope estimate]:\n'):
+                    lines = lines[0:10]
+                    lines.reverse()
+                    line1 = lines[2]
+                    #line2 = lines[8]
+                    #print(output_file_name )
+                    #print(line1.split(','))
+                    cost = float(line1.split(',')[4].split(']')[0])
+                    print(cost)
+                    costs.append(cost)
+                    accepted_output_file_names.append(output_file_name)
+                    num_files = num_files + 1
     except IOError as exc:
         print(exc)
 
