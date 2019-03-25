@@ -10,7 +10,7 @@ import glob
 import numpy as np
 
 
-output_directory = '/n/scratch2/jmr95/parameter_optimization'
+output_directory = '/home/jmr95/patientSimulator/optimization_data'
 file_names = '/*.txt'
 
 output_file_names = output_directory + file_names
