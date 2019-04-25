@@ -33,7 +33,7 @@ def generate_patient_counts(num_intervals, num_days_per_interval):
     '''
 
     # NV model parameters
-    #'''
+    '''
     shape = 111.313
     scale = 296.728
     alpha = 296.339
@@ -472,7 +472,7 @@ def simulate_RCT_results(num_patients_per_arm, num_trials, num_base_weeks, num_t
 
 
 num_patients_per_arm = 153
-num_trials = 100
+num_trials = 5000
 num_base_weeks = 8
 num_test_weeks = 12
 num_total_base_szs = 4
