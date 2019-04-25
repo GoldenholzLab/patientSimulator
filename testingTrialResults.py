@@ -15,6 +15,7 @@ from scipy import stats
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import textwrap
+import pickle
 
 
 def checkIntervals(seizureCounts):
@@ -126,7 +127,7 @@ def plotPatients(patients, image_dir):
     ax1 = fig1.gca()
     plt.scatter(logMean, logStdDev, s = 0.5,  color = 'tab:cyan')
     #plt.xlim([-.4, 0.6])
-    plt.xlim([-1, 4])
+    plt.xlim([-0.4, 0.6])
     plt.ylim([-.4, 1])
     
     # calculate and add line of best fit on log-log plot
@@ -158,13 +159,13 @@ def plotPatients(patients, image_dir):
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
     plt.axvline(x=dataMedian, color='k', linestyle='-')
-    plt.axvline(x=8.5, color='r', linestyle='--')
-    plt.legend(['median: ' + str( np.round(dataMedian, 2) ), 'target median:8.5'], fontsize = 12)
-    long_title = 'Histogram of monthly seizure frequencies (' + str( numPatients ) + ' patients)'
+    plt.axvline(x=2.7, color='r', linestyle='--')
+    plt.legend(['median: ' + str( np.round(dataMedian, 2) ), 'target median:2.7'], fontsize = 12)
+    long_title = 'Histogram of monthly seizure frequencies (' + str( numPatients ) + ' simulated patients)'
     formatted_title = '\n'.join(textwrap.wrap(long_title, 40))
     plt.title(formatted_title, fontsize = 14)
-    plt.xlabel('Monthly seizure frequencies', fontsize = 14)
-    long_y_label = 'Fraction of simulated patients with monthly median seizure frequency'
+    plt.xlabel('Monthly seizure frequency', fontsize = 14)
+    long_y_label = 'Fraction of simulated patients'
     formatted_y_label = '\n'.join(textwrap.wrap(long_y_label, 30))
     plt.ylabel(formatted_y_label, fontsize = 14)
     plt.gray()
@@ -205,7 +206,7 @@ def plotPatientWeeks(patient, image_dir):
     plt.yticks(fontsize = 14)
     plt.xlabel('Weeks', fontsize = 14)
     plt.ylabel('weekly seizure counts', fontsize = 14)
-    long_title = 'One patient\'s weekly seizure counts over ' + str(numWeeks) + ' weeks'
+    long_title = 'One simulated patient\'s weekly seizure counts over ' + str(numWeeks) + ' weeks'
     formatted_title = '\n'.join(textwrap.wrap(long_title, 40))
     plt.title(formatted_title, fontsize = 14)
     fig3.savefig(fname = image_dir + '/Romero-fig3', dpi = 600, bbox_inches = 'tight')
@@ -881,22 +882,24 @@ baseSzFree = 0
 
 # group level parameters
 
-'''
+
 shape= 24.143
 scale = 297.366
 alpha = 284.024
 beta = 369.628
-'''
+
 '''
 shape = 111.313
 scale = 296.728
 alpha = 296.339
 beta = 243.719
 '''
+'''
 shape = 2.802
 scale = 50.155
 alpha = 59.361
 beta = 336.12
+'''
 
 
 ############
@@ -910,11 +913,10 @@ image_dir = '/Users/juanromero/Documents/Articles of Interest/Randomized Clinica
 
 numPlaceboPatients = 10000
 numDrugPatients = 1
-numBase = 90
-numTestMin = 90
-numTestMax = 91
+numBase = 8
+numTestMin = 24
+numTestMax = 121
 uniform = False
-
 
 [placeboArm, _] = generateTrial(shape, scale, alpha, beta, 0, placeboEffect, 0, numScreening, numBase, numTestMin, numTestMax,
                                         numPlaceboPatients, numDrugPatients, screeningMinSzs, screeningIntervalSize, screeningIntervalMinSzs, 
@@ -941,3 +943,10 @@ trials = sampleMeanAndStandardDevation(shape, scale, alpha, beta, drugEffect, pl
                               baseTotalMinSzs, baseIntervalSize, baseIntervalMinSzs, baseSzFree, uniform,num_trials, image_dir, genAggValueRound)
 
 plotRR50AndMPC(trials[0][0], trials[0][1], genValueRound, pValueRound, image_dir, box)
+
+
+with open(image_dir + '/histogram_and_log_log_slope_plot_data.pkl', 'wb+') as pkl_file:  
+    pickle.dump(placeboArm, pkl_file)
+    
+with open(image_dir + '/RCT_data.pkl', 'wb+') as pkl_file:
+    pickle.dump(trials, pkl_file)
