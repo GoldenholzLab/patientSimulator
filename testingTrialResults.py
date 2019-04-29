@@ -643,7 +643,7 @@ def sampleMeanAndStandardDevation(shape, scale, alpha, beta, drugEffect, placebo
         i += 1
     
     plt.yticks(y, ylabels, rotation='horizontal')
-    plt.xlim([0, 150])
+    plt.xlim([0, 100])
     plt.xlabel(xlabel)
     plt.title(title)
     plt.legend()
@@ -866,7 +866,7 @@ def plotRR50AndMPC(placeboArm, drugArm, genValueRounding, pValueRounding, image_
 
 # important meta-parameters
 drugEffect = 0.2
-drugEffectSD = 0
+drugEffectSD = 0.05
 placeboEffect = 0
 
 # randomized clinical trial parameters
@@ -910,7 +910,6 @@ beta = 336.12
 # directory to save images to 
 image_dir = '/Users/juanromero/Documents/Articles of Interest/Randomized Clinical Trials'
 
-
 numPlaceboPatients = 10000
 numDrugPatients = 1
 numBase = 8
@@ -924,6 +923,7 @@ uniform = False
 
 plotPatients(placeboArm.allSzs, image_dir)
 plotPatientWeeks(placeboArm.allSzs[0], image_dir)
+
 
 # number of patients for both arms were taken from trial, and then 50/50 split was provided
 numPlaceboPatients = 153
@@ -944,9 +944,10 @@ trials = sampleMeanAndStandardDevation(shape, scale, alpha, beta, drugEffect, pl
 
 plotRR50AndMPC(trials[0][0], trials[0][1], genValueRound, pValueRound, image_dir, box)
 
-
+'''
 with open(image_dir + '/histogram_and_log_log_slope_plot_data.pkl', 'wb+') as pkl_file:  
     pickle.dump(placeboArm, pkl_file)
-    
+'''
+ 
 with open(image_dir + '/RCT_data.pkl', 'wb+') as pkl_file:
     pickle.dump(trials, pkl_file)
