@@ -374,7 +374,7 @@ def generate_RCT_patient(num_base_weeks, num_test_weeks, num_total_base_szs, dru
                         # say that a seizure has been removed
                         num_removed = num_removed + 1
 
-                # if the drug effect is negative...
+                # if the drug effect is negative:
                 if(drug_effect < 0):
 
                     # generate a percentage between 0 % and -100 %
