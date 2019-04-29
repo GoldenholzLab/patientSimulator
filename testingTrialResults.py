@@ -917,7 +917,7 @@ numTestMin = 24
 numTestMax = 121
 uniform = False
 
-[placeboArm, _] = generateTrial(shape, scale, alpha, beta, 0, placeboEffect, 0, numScreening, numBase, numTestMin, numTestMax,
+[placeboArm, _] = generateTrial(shape, scale, alpha, beta, 0, placeboEffect, drugEffectSD, numScreening, numBase, numTestMin, numTestMax,
                                         numPlaceboPatients, numDrugPatients, screeningMinSzs, screeningIntervalSize, screeningIntervalMinSzs, 
                                         baseTotalMinSzs, baseIntervalSize, baseIntervalMinSzs, baseSzFree, uniform)
 
