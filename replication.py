@@ -44,9 +44,11 @@ def generate_patient_counts(num_intervals, num_days_per_interval):
     n = np.random.gamma(shape, 1/scale)
     p = np.random.beta(alpha, beta)
 
+    '''
     # convert to mean and overdispersion parameters
     mu = n*(1 - p)/p
-    alpha = 1/n
+    d_alpha = 1/n
+    '''
 
     # initialize the array of patient seizure diary counts
     patient_counts = np.zeros(num_intervals)
@@ -55,7 +57,7 @@ def generate_patient_counts(num_intervals, num_days_per_interval):
     for interval in range(num_intervals):
 
         # use the gamma-poisson mixture model to generate seizure counts via the negative binomial
-        rate = np.random.gamma(num_days_per_interval/alpha, mu*alpha)
+        rate = np.random.gamma(num_days_per_interval*n, (1 - p)/p)
         count = np.random.poisson(rate)
         patient_counts[interval] = np.int_(count)
 
@@ -324,13 +326,13 @@ def generate_RCT_patient(num_base_weeks, num_test_weeks, num_total_base_szs, dru
         drug_effect = np.random.normal(drug_effect_mu, drug_effect_sigma)
 
         # if the drug effect is a percentage over 100%, then...
-        if( drug_effect <= 1 ):
+        if( drug_effect >= 1 ):
 
             # change the drug_effect to be below 100 %
             drug_effect = 0.999999999
 
         # if the drug effect is a percentage below -100%, then...
-        if( drug_effect >= -1 ):
+        if( drug_effect <= -1 ):
 
             # change the drug_effect to be above -100 %
             drug_effect = -0.999999999
@@ -485,7 +487,7 @@ def generate_RCT(num_patients_per_arm, num_base_weeks, num_test_weeks, num_total
 
     # calculate the percent change for each patient in both arms
     placebo_arm_percent_change = np.divide(baseline_placebo_arm_average_weekly_counts - testing_placebo_arm_average_weekly_counts, baseline_placebo_arm_average_weekly_counts)
-    drug_arm_percent_change = np.divide(baseline_drug_arm_average_weekly_counts - testing_drug_arm_average_weekly_counts, baseline_drug_arm_average_weekly_counts)
+    drug_arm_percent_change    = np.divide(baseline_drug_arm_average_weekly_counts - testing_drug_arm_average_weekly_counts      , baseline_drug_arm_average_weekly_counts)
 
     # calculate the 50% responder rate over all the percent changes in the placebo arm as well as the drug arm
     placebo_arm_RR50 = np.sum(placebo_arm_percent_change >= 0.5)/num_patients_per_arm
@@ -576,6 +578,7 @@ def simulate_RCT_results(num_patients_per_arm, num_trials, num_base_weeks, num_t
     return [placebo_arm_RR50_mean, placebo_arm_RR50_std, drug_arm_RR50_mean, drug_arm_RR50_std, 
             placebo_arm_MPC_mean,  placebo_arm_MPC_std,  drug_arm_MPC_mean,  drug_arm_MPC_std]
 
+
 # log-log plot and histogram parameters
 num_patients = 10000
 min_num_months = 30
@@ -590,7 +593,7 @@ print(          '\n\nlog-log slope: '          +                str(np.round(log
 # 50% responder rate and median percent change for both the drug and
 # placebo arms over many RCTs
 num_patients_per_arm = 153
-num_trials = 5000
+num_trials = 500
 num_base_weeks = 8
 num_test_weeks = 12
 num_total_base_szs = 4
@@ -602,7 +605,7 @@ placebo_effect_mu = 0
  placebo_arm_MPC_mean,  placebo_arm_MPC_std,  drug_arm_MPC_mean,  drug_arm_MPC_std] = \
             simulate_RCT_results(num_patients_per_arm, num_trials, num_base_weeks, num_test_weeks, num_total_base_szs, drug_effect_mu, drug_effect_sigma, placebo_effect_mu)
 
-print( '\n\nplacebo RR50: ' + str(np.round(100*placebo_arm_RR50_mean, decimal_round)) + ' +- ' +  str(np.round(100*placebo_arm_RR50_std, decimal_round)) + ' % ' + 
-       '\n\ndrug RR50: '    + str(np.round(100*drug_arm_RR50_mean, decimal_round))    + ' +- ' +  str(np.round(100*drug_arm_RR50_std, decimal_round))    + ' % ' +  
-       '\n\nplacebo MPC: '  + str(np.round(100*placebo_arm_MPC_mean, decimal_round))  + ' +- ' +  str(np.round(100*placebo_arm_MPC_std, decimal_round))  + ' % ' +  
-       '\n\ndrug MPC: '     + str(np.round(100*drug_arm_MPC_mean, decimal_round))     + ' +- ' +  str(np.round(100*drug_arm_MPC_std, decimal_round))     + ' % \n\n' )
+print( '\n\nplacebo RR50: ' + str(np.round(100*placebo_arm_RR50_mean, decimal_round)) + ' ± ' +  str(np.round(100*placebo_arm_RR50_std, decimal_round)) + ' % ' + 
+       '\n\ndrug RR50: '    + str(np.round(100*drug_arm_RR50_mean, decimal_round))    + ' ± ' +  str(np.round(100*drug_arm_RR50_std, decimal_round))    + ' % ' +  
+       '\n\nplacebo MPC: '  + str(np.round(100*placebo_arm_MPC_mean, decimal_round))  + ' ± ' +  str(np.round(100*placebo_arm_MPC_std, decimal_round))  + ' % ' +  
+       '\n\ndrug MPC: '     + str(np.round(100*drug_arm_MPC_mean, decimal_round))     + ' ± ' +  str(np.round(100*drug_arm_MPC_std, decimal_round))     + ' % \n\n' )
