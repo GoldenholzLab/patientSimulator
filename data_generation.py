@@ -893,19 +893,3 @@ total_time_in_minutes = total_time_in_seconds/60
 print( 'cpu time: ' +  np.round( str( total_time_in_minutes, 3 ) ) + ' minutes' )
 
 
-'''
-with open( os.getcwd() + '/data.txt' ) as text_file:
-
-    endpoint_responses = np.array([placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std,
-                                    drug_RR50_mean,    drug_RR50_std,    drug_MPC_mean,    drug_MPC_std    ])
-
-    patient_population_summary_statistics = np.array([median_monthly_seizure_frequency, log_log_slope, 
-                                                        log_log_intercept, r_value])
-
-    json.dump(endpoint_responses.tolist(), text_file)
-    json.dump(patient_population_summary_statistics.tolist(), text_file)
-    json.dump(monthly_seizure_frequencies.tolist(), text_file)
-    json.dump(biweekly_log10means.tolist(), text_file)
-    json.dump(biweekly_log10stds.tolist(), text_file)
-'''
-
