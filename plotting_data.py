@@ -1,21 +1,39 @@
 import numpy as np
 import scipy.stats as stats
+import matplotlib.pyplot as plt
 import os
 import json
+import textwrap
 
-with open( os.getcwd() + '/data.txt' ) as text_file:
+endpoint_statistics_filename = 'endpoint_statistics'
+log_log_histogram_numbers_filename = 'log_log_histogram_numbers'
+monthly_seizure_frequencies_filename = 'monthly_seizure_frequencies'
+biweekly_log10means_filename = 'biweekly_log10means'
+biweekly_log10stds_filename = 'biweekly_log10stds'
+decimal_round = 1
 
-    endpoint_responses = np.array([placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std,
-                                    drug_RR50_mean,    drug_RR50_std,    drug_MPC_mean,    drug_MPC_std    ])
 
-    patient_population_summary_statistics = np.array([median_monthly_seizure_frequency, log_log_slope, 
-                                                        log_log_intercept, r_value])
+with open(os.getcwd() + '/' + endpoint_statistics_filename + '.json', 'r') as text_file:
 
-    json.dump(endpoint_responses.tolist(), text_file)
-    json.dump(patient_population_summary_statistics.tolist(), text_file)
-    json.dump(monthly_seizure_frequencies.tolist(), text_file)
-    json.dump(biweekly_log10means.tolist(), text_file)
-    json.dump(biweekly_log10stds.tolist(), text_file)
+    endpoint_statistics = np.array(json.load(text_file))
+
+placebo_RR50_mean = endpoint_statistics[0]
+placebo_RR50_std  = endpoint_statistics[1]
+placebo_MPC_mean  = endpoint_statistics[2]
+placebo_MPC_std   = endpoint_statistics[3]
+drug_RR50_mean    = endpoint_statistics[4]
+drug_RR50_std     = endpoint_statistics[5]
+drug_MPC_mean     = endpoint_statistics[6]
+drug_MPC_std      = endpoint_statistics[7]
+
+with open(os.getcwd() + '/' + log_log_histogram_numbers_filename + '.json', 'r') as text_file:
+
+    log_log_histogram_numbers = np.array(json.load(text_file))
+
+median_monthly_seizure_frequency = log_log_histogram_numbers[0]
+log_log_slope                    = log_log_histogram_numbers[1]
+log_log_intercept                = log_log_histogram_numbers[2]
+r_value                          = log_log_histogram_numbers[3]
 
 
 # add points on log-log plot

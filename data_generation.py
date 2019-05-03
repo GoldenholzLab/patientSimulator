@@ -1012,6 +1012,9 @@ num_trials = 5000
 min_num_weeks = 24
 max_num_weeks = 120
 num_patients = 10000
+'''
+RuntimeWarning: divide by zero encountered in log10
+'''
 
 # file names of json files which store information to be plotted
 endpoint_statistics_filename = 'endpoint_statistics'
