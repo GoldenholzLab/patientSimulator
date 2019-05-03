@@ -862,26 +862,30 @@ endpoint_statistics = np.array([placebo_RR50_mean, placebo_RR50_std, placebo_MPC
                                                 min_num_weeks, max_num_weeks, 
                                                 num_patients)
 
-# store the scalar numbers needed to pplot the histogram and log-log plot in an array
+# store the scalar numbers needed to plot the histogram and log-log plot in an array
 log_log_histogram_numbers = np.array([median_monthly_seizure_frequency, log_log_slope, log_log_intercept, r_value])
 
-
+# store the endpoint statistics into a JSON file
 with open( os.getcwd() + '/' + endpoint_statistics_filename + '.json', 'w+' ) as text_file:
 
     json.dump(endpoint_statistics.tolist(), text_file)
 
+# store the the scalar numbers needed to plot the histogram and log-log plot into a JSON file
 with open( os.getcwd() + '/' + log_log_histogram_numbers_filename + '.json', 'w+' ) as text_file:
 
     json.dump(log_log_histogram_numbers.tolist(), text_file)
 
+# store the monthly seizure frequencies into a JSON file
 with open( os.getcwd() + '/' + monthly_seizure_frequencies_filename + '.json', 'w+' ) as text_file:
 
     json.dump(monthly_seizure_frequencies.tolist(), text_file)
 
+# store the base 10 logarithms of the biweekly seizure count means into a JSON file
 with open( os.getcwd() + '/' + biweekly_log10means_filename + '.json', 'w+' ) as text_file:
 
     json.dump(biweekly_log10means.tolist(), text_file)
 
+# store the base 10 logarithms of the biweekly seizure count stnadard deviations into a JSON file
 with open( os.getcwd() + '/' + biweekly_log10stds_filename + '.json', 'w+' ) as text_file:
 
     json.dump(biweekly_log10stds.tolist(), text_file)
