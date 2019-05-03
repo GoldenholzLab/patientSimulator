@@ -802,6 +802,185 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
         raise ValueError('The placebo effect distribution is too likely to generate placebo effects greater than 100% \n(drug_effect_mu + 1.96*drug_effect_sigma > 1)')
 
 
+def generate_and_store_data(shape, scale, alpha, beta, 
+                            placebo_effect_mu, placebo_effect_sigma, drug_effect_mu, drug_effect_sigma, 
+                            time_scale_conversion, num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
+                            min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
+                            endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
+                            biweekly_log10means_filename, biweekly_log10stds_filename):
+    '''
+
+    This function generates and stores the data needed to create the histogram of monthly seizure frequencies, the scatter plot
+    
+    of the base 10 logarithms of the biweekly seizure means vs the base 10 logarithms of the biweekly siezure count standard deviations,
+     
+    and the mean and standard deviation of the 50%-responder-rate/median-percent-change for the placebo/drug arm.
+    Inputs:
+
+        1) shape:
+
+            (float) - first group level parameter for the NV model
+
+        2) scale:
+
+            (float) - second group level parameter for the NV model
+
+        3) alpha:
+
+            (float) - third group level parameter for the NV model
+        
+        4) beta:
+
+            (float) - fourth group level parameter for the NV model
+
+        5) placebo_effect_mu:
+
+            (float) - the mean of the normally distributed placebo effect distribution
+        
+        6) placebo_effect_sigma:
+
+            (float) - the standard deviation of the normally distributed placebo effect distribution
+        
+        7) drug_effect_mu:
+
+            (float) - the mean of the normally distributed drug efficacy distribution
+        
+        8) drug_effect_sigma:
+
+            (float) - the standard deviation of the normally distributed drug efficacy distribution
+
+        9) time_scale_conversion:
+        
+            (float) -  A time-scale conversion factor which determines what period of time the 
+                       
+                       seizure counts will be generated in (i.e., hourly, daily, weekly, biweeekly, monthly, etc.).
+
+                       The group level parameters are optimized for daily seizure counts, so in order to generate daily
+
+                       seizure counts, just set this parameter equal. To generate weekly counts, set this parameter equal to
+
+                       7, and to generate hourly counts, set this parameter equal to 1/24. In general, to convert from a daily 
+                       
+                       timescale to a larger time scale, set this parameter equal to the number of days in each interval of that 
+
+                       time scale, and to convert to a smaller time scale, set this parameter equal to 1 divided by the number of
+
+                       intervals in 1 day.
+
+        10) num_patients_per_arm:
+
+            (int) - the number of patients for both the placebo arm and the drug arm of one trial
+        
+        11) num_baseline_intervals:
+
+            (int) - the number of intervals in the baseline period of each patient
+        
+        12) num_testing_intervals:
+
+            (int) - the number of intervals in the testing period of each patient
+
+        13) min_required_baseline_seizure_count:
+
+            (int) - eligibility criteria which is the minimum amount of seizures that have to be in the baseline of each patient
+        
+        14) num_trials:
+
+            (int) -  the number of trials that the endpoints are going to be averaged over
+        
+        15) min_num_weeks: 
+
+            (int) -  the maximum number of weeks that any patient in the synthetic patient population can have
+        
+        16) max_num_weeks:
+
+            (int) -  the maximum number of weeks that any patient in the synthetic patient population can have
+        
+        17) num_patients:
+
+            (int) - the total number of patients in the synthetic patient population
+ 
+        18) endpoint_statistics_filename:
+
+            (string) - the file name of the JSON file which will store the endpoint statistics (mean and 
+                        
+                        standard deviation of 50% responder rate and median percent change for placebo and
+                        
+                        drug arms)
+        
+        19) log_log_histogram_numbers_filename:
+
+            (string) - the file name of the JSON file which will store the scalar numbers needed to plot 
+            
+                        the histogram and log-log plot
+        
+        20) monthly_seizure_frequencies_filename:
+
+            (string) - the file name of the JSON file which will store the monthly seizure frequencies of the
+
+                        synthetic patient population
+
+        21) biweekly_log10means_filename:
+        
+            (string) - the file name of the JSON file which will store the base 10 logarithms of the biweekly seizure 
+                        
+                        count means of the synthetic patient population
+        
+        22) biweekly_log10stds_filename:
+
+            (string) - the file name of the JSON file which will store the base 10 logarithms of the biweekly seizure 
+                        
+                        count standard deviations of the synthetic patient population
+
+    '''
+
+    # calculate the endpoint statistics under given RCT design parameters
+    [placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std,
+     drug_RR50_mean,    drug_RR50_std,    drug_MPC_mean,    drug_MPC_std    ] = \
+        calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta, 
+                                                           placebo_effect_mu, placebo_effect_sigma,
+                                                           drug_effect_mu, drug_effect_sigma, 
+                                                           num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
+                                                           time_scale_conversion, min_required_baseline_seizure_count, num_trials)
+
+    # store the endpoint statistics in an array
+    endpoint_statistics = np.array([placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std,
+                                    drug_RR50_mean,    drug_RR50_std,    drug_MPC_mean,    drug_MPC_std    ])
+
+    # calculate statistical features of synthetic patient population generated by NV model
+    [median_monthly_seizure_frequency, log_log_slope, log_log_intercept, r_value,
+    monthly_seizure_frequencies, biweekly_log10means, biweekly_log10stds] = \
+        get_patient_population_statistical_features(shape, scale, alpha, beta, 
+                                                    min_num_weeks, max_num_weeks, 
+                                                    num_patients)
+
+    # store the scalar numbers needed to plot the histogram and log-log plot in an array
+    log_log_histogram_numbers = np.array([median_monthly_seizure_frequency, log_log_slope, log_log_intercept, r_value])
+
+    # store the endpoint statistics into a JSON file
+    with open( os.getcwd() + '/' + endpoint_statistics_filename + '.json', 'w+' ) as text_file:
+
+        json.dump(endpoint_statistics.tolist(), text_file)
+
+    # store the scalar numbers needed to plot the histogram and log-log plot into a JSON file
+    with open( os.getcwd() + '/' + log_log_histogram_numbers_filename + '.json', 'w+' ) as text_file:
+
+        json.dump(log_log_histogram_numbers.tolist(), text_file)
+
+    # store the monthly seizure frequencies into a JSON file
+    with open( os.getcwd() + '/' + monthly_seizure_frequencies_filename + '.json', 'w+' ) as text_file:
+
+        json.dump(monthly_seizure_frequencies.tolist(), text_file)
+
+    # store the base 10 logarithms of the biweekly seizure count means into a JSON file
+    with open( os.getcwd() + '/' + biweekly_log10means_filename + '.json', 'w+' ) as text_file:
+
+        json.dump(biweekly_log10means.tolist(), text_file)
+
+    # store the base 10 logarithms of the biweekly seizure count standard deviations into a JSON file
+    with open( os.getcwd() + '/' + biweekly_log10stds_filename + '.json', 'w+' ) as text_file:
+
+        json.dump(biweekly_log10stds.tolist(), text_file)
+
 # group level parameters of NV model
 shape= 24.143
 scale = 297.366
@@ -842,58 +1021,16 @@ biweekly_log10stds_filename = 'biweekly_log10stds'
 
 start_time_in_seconds = time.time()
 
-# calculate the endpoint statistics under given RCT design parameters
-[placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std,
- drug_RR50_mean,    drug_RR50_std,    drug_MPC_mean,    drug_MPC_std    ] = \
-    calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta, 
-                                                       placebo_effect_mu, placebo_effect_sigma,
-                                                       drug_effect_mu, drug_effect_sigma, 
-                                                       num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
-                                                       time_scale_conversion, min_required_baseline_seizure_count, num_trials)
-
-# store the endpoint statistics in an array
-endpoint_statistics = np.array([placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std,
-                                    drug_RR50_mean,    drug_RR50_std,    drug_MPC_mean,    drug_MPC_std    ])
-
-# calculate statistical features of synthetic patient population generated by NV model
-[median_monthly_seizure_frequency, log_log_slope, log_log_intercept, r_value,
- monthly_seizure_frequencies, biweekly_log10means, biweekly_log10stds] = \
-    get_patient_population_statistical_features(shape, scale, alpha, beta, 
-                                                min_num_weeks, max_num_weeks, 
-                                                num_patients)
-
-# store the scalar numbers needed to plot the histogram and log-log plot in an array
-log_log_histogram_numbers = np.array([median_monthly_seizure_frequency, log_log_slope, log_log_intercept, r_value])
-
-# store the endpoint statistics into a JSON file
-with open( os.getcwd() + '/' + endpoint_statistics_filename + '.json', 'w+' ) as text_file:
-
-    json.dump(endpoint_statistics.tolist(), text_file)
-
-# store the the scalar numbers needed to plot the histogram and log-log plot into a JSON file
-with open( os.getcwd() + '/' + log_log_histogram_numbers_filename + '.json', 'w+' ) as text_file:
-
-    json.dump(log_log_histogram_numbers.tolist(), text_file)
-
-# store the monthly seizure frequencies into a JSON file
-with open( os.getcwd() + '/' + monthly_seizure_frequencies_filename + '.json', 'w+' ) as text_file:
-
-    json.dump(monthly_seizure_frequencies.tolist(), text_file)
-
-# store the base 10 logarithms of the biweekly seizure count means into a JSON file
-with open( os.getcwd() + '/' + biweekly_log10means_filename + '.json', 'w+' ) as text_file:
-
-    json.dump(biweekly_log10means.tolist(), text_file)
-
-# store the base 10 logarithms of the biweekly seizure count stnadard deviations into a JSON file
-with open( os.getcwd() + '/' + biweekly_log10stds_filename + '.json', 'w+' ) as text_file:
-
-    json.dump(biweekly_log10stds.tolist(), text_file)
-
+generate_and_store_data(shape, scale, alpha, beta, 
+                        placebo_effect_mu, placebo_effect_sigma, drug_effect_mu, drug_effect_sigma, 
+                        time_scale_conversion, num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
+                        min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
+                        endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
+                        biweekly_log10means_filename, biweekly_log10stds_filename)
 
 stop_time_in_seconds = time.time()
 total_time_in_seconds = stop_time_in_seconds - start_time_in_seconds
 total_time_in_minutes = total_time_in_seconds/60
-print( 'cpu time: ' +  np.round( str( total_time_in_minutes, 3 ) ) + ' minutes' )
+print( '\n\ncpu time: ' +  str( np.round( total_time_in_minutes, 3 ) ) + ' minutes\n\n' )
 
 
