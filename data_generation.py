@@ -815,6 +815,7 @@ def generate_and_store_data(shape, scale, alpha, beta,
     of the base 10 logarithms of the biweekly seizure means vs the base 10 logarithms of the biweekly siezure count standard deviations,
      
     and the mean and standard deviation of the 50%-responder-rate/median-percent-change for the placebo/drug arm.
+
     Inputs:
 
         1) shape:
