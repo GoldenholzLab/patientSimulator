@@ -114,26 +114,83 @@ def generate_patient(shape, scale, alpha, beta,
 
 
 def get_patient_statistical_features(shape, scale, alpha, beta,
-                                                min_num_weeks, max_num_weeks):
+                                     min_num_weeks, max_num_weeks):
+    '''
 
+    This function generates one synthetic patient's weekly seizure diary as according to the NV model, and calculates 
+    
+    their statistical features, as described in the outputs. This patient's seizure diary length is randomly determined
+
+    by a discrete uniform distribution whose minimum and maximum number of weeks is determined by the user.
+
+    Inputs:
+
+        1) shape:
+        
+            (float) - first group level parameter for the NV model
+
+        2) scale:
+
+            (float) - second group level parameter for the NV model
+
+        3) alpha:
+
+            (float) - third group level parameter for the NV model
+
+        4) beta:
+
+            (float) - fourth group level parameter for the NV model
+
+        5) min_num_weeks:
+
+            (int) - the minimum number of weeks that any generated synthetic patient can have
+
+        6) max_num_weeks:
+
+            (int) - the maximum number of weeks that any generated synthetic patient can have
+
+    Outputs:
+
+        1) biweekly_log10mean:
+
+            (float) - the base 10 logarithm of the biweekly seizure count mean of one synthetic patient
+        
+        2) biweekly_log10std:
+
+            (float) - the base 10 logarithm of the biweekly seizure count standard deviation of one synthetic patient
+        
+        3) monthly_seizure_frequency:
+
+            (float) - the monthly seizure count mean of one syntheic patient
+
+    '''
+
+    # calculate the length of one synthetic patient's weekly seizure diary
     num_testing_intervals = np.random.randint(min_num_weeks, max_num_weeks)
 
+    # generate one synthetic patient's weekly seizure diary according to NV model and the randomly generated diary length
     patient_weekly_seizure_counts = generate_patient(shape, scale, alpha, beta,
                                                       7, 0, num_testing_intervals, 0)
     
+    # convert the weekly seizure diary into a biweekly seizure diary
     twoWeeks = []
     for y in range(0, len(patient_weekly_seizure_counts)-1, 2):
         twoWeeks.append(patient_weekly_seizure_counts[y]+patient_weekly_seizure_counts[y+1])
     patient_biweekly_seizure_counts = np.array(twoWeeks)
 
+    # convert the weekly seizure diary into a monthly seizure diary
     months = []
     for y in range(0, len(patient_weekly_seizure_counts)-3, 4):
         months.append(patient_weekly_seizure_counts[y]+patient_weekly_seizure_counts[y+1]+patient_weekly_seizure_counts[y+2]+patient_weekly_seizure_counts[y+3])
     patient_monthly_seizure_counts = np.array(months)
 
+    # calculate the base 10 logarithm of the biweekly seizure count mean
     biweekly_log10mean = np.log10(np.mean(patient_biweekly_seizure_counts))
+
+    # calculate the base 10 logarithm of the biweekly seizure count mean
     biweekly_log10std = np.log10(np.std(patient_biweekly_seizure_counts))
 
+    # calculate the omnthly seizure count mean
     monthly_seizure_frequency = np.mean(patient_monthly_seizure_counts)
     
     return [biweekly_log10mean, biweekly_log10std, monthly_seizure_frequency]
@@ -142,22 +199,119 @@ def get_patient_statistical_features(shape, scale, alpha, beta,
 def get_patient_population_statistical_features(shape, scale, alpha, beta, 
                                                 min_num_weeks, max_num_weeks, 
                                                 num_patients):
+    '''
 
+    This function generates one synthetic patient population. The patients have weekly seizure diaries which
+
+    are not all of equal length: rather, each patient's weekly seizure diary length is randomly generated 
+
+    according to a uniform distribution, and the minimum as well as the maximum number of weeks in this
+
+    uniform distribution is specified by the user.
+
+    Inputs:
+
+        1) shape:
+        
+            (float) - first group level parameter for the NV model
+        
+        2) scale:
+
+            (float) - second group level parameter for the NV model
+
+        3) alpha:
+
+            (float) - third group level parameter for the NV model
+        
+        4) beta:
+
+            (float) - fourth group level parameter for the NV model
+
+        5) min_num_weeks:
+
+            (int) - the minimum number of weeks that any patient in the synthetic patient population can have
+        
+        6) max_num_weeks:
+
+            (int) -  the maximum number of weeks that any patient in the synthetic patient population can have
+        
+        7) num_patients:
+
+            (int) - the total number of patients in the synthetic patient population
+    
+    Outputs:
+
+        1) median_monthly_seizure_frequency:
+        
+            (float) - the median monthly seizure frequency as estimated from one generated synthetic patient population
+
+        2) log_log_slope:
+
+            (float) - the slope of the line of best fit on the log-log plot of biweekly seizure count man vs biweekly 
+            
+                      seizure count standard deviation
+
+        3) log_log_intercept:
+
+            (float) - the intercept of the line of best fit on the log-log plot of biweekly seizure count man vs biweekly 
+                      
+                      seizure count standard deviation
+
+        4) r_value:
+
+            (float) - the correlation of the line of best fit on the log-log plot of biweekly seizure count man vs biweekly 
+                      
+                      seizure count standard deviation
+
+        5) monthly_seizure_frequencies:
+
+            (1D Numpy array) - the array of mnthly seizure frequencies from which the median monthly seizure frequency 
+                               
+                               was estimated
+        
+        6) biweekly_log10means:
+        
+            (1D Numpy array) - the array of base 10 logarithms of biweekly seizure count means used to construct 
+                               
+                               the log-log plot
+
+        biweekly_log10stds
+
+            (1D Numpy array) - the array of base 10 logarithms of biweekly seizure count standard deviations used to 
+            
+                               construct the log-log plot
+
+    '''
+
+    # initialize the array of base 10 logarithms of biweekly seizure count means
     biweekly_log10means = np.zeros(num_patients)
+
+    # initialize the array of base 10 logarithms of biweekly seizure count standard deviations
     biweekly_log10stds = np.zeros(num_patients)
+
+    # initialize the array of monthly seizure frequencies
     monthly_seizure_frequencies = np.zeros(num_patients)
 
+    # for each patient in the synthetic patient population:
     for patient_index in range(num_patients):
     
+        # calculate each individual patient's statistical features:
+        #   1) base 10 logarithm of biweekly mean
+        #   2) base 10 logarithm of biweekly standard deviation
+        #   3) monthly seizure count mean
         [biweekly_log10mean, biweekly_log10std, monthly_seizure_frequency] = \
                         get_patient_statistical_features(shape, scale, alpha, beta,
                                                          min_num_weeks, max_num_weeks)
     
+        # store the patient's statistical features
         biweekly_log10means[patient_index] = biweekly_log10mean
         biweekly_log10stds[patient_index] = biweekly_log10std
         monthly_seizure_frequencies[patient_index] = monthly_seizure_frequency
 
+    # calculate the median monthly seizure frequency
     median_monthly_seizure_frequency = np.median(monthly_seizure_frequencies)
+
+    # use linear regression to estimate the slope, intercept and correlation coefficient of log-log plot of biweekly mean vs biweekly standard deviation
     [log_log_slope, log_log_intercept, r_value, _, _] = stats.linregress(biweekly_log10means, biweekly_log10stds)
     
     return [median_monthly_seizure_frequency, log_log_slope, log_log_intercept, r_value, monthly_seizure_frequencies, biweekly_log10means, biweekly_log10stds]
@@ -320,6 +474,10 @@ def calculate_endpoint_statistics(shape, scale, alpha, beta,
         2) the median percent change of one arm of a trial over N (N = num_trials) trials
     
     The trial arm in question can either be the placebo arm or the drug arm, depending on the drug_arm_flag parameter.
+
+    The mean and standard deviation of each endpoint (RR50, MPC) over multiple trial are referred to within this code 
+    
+    documentation as the statistics of that endpoint.
 
     Inputs:
 
@@ -489,6 +647,10 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
         3) the 50% responder rate of the drug arm N (N = num_trials) trials
 
         4) the median percent change of the drug arm N (N = num_trials) trials
+    
+    The mean and standard deviation of each endpoint (RR50, MPC) over multiple trial are referred to within this code 
+    
+    documentation as the statistics of that endpoint.
 
     Inputs:
 
@@ -642,31 +804,40 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
         raise ValueError('The placebo effect distribution is too likely to generate placebo effects greater than 100% \n(drug_effect_mu + 1.96*drug_effect_sigma > 1)')
 
 
-
+# group level parameters of NV model
 shape= 24.143
 scale = 297.366
 alpha = 284.024
 beta = 369.628
 
+# parameters determining distribution of placebo effects and drug efficacies
 placebo_effect_mu = 0
 placebo_effect_sigma = 0
 drug_effect_mu = 0.2
 drug_effect_sigma = 0.05
 
-num_patients_per_arm = 153
+# tell the algorithm to generate weekly seizure counts
 time_scale_conversion = 7
+
+# RCT design parameters
+num_patients_per_arm = 153
 num_baseline_intervals = 8
 num_testing_intervals = 12
-min_required_baseline_seizure_count = 4
-num_trials = 5000
-decimal_round = 1
 
+# eligibility criteria
+min_required_baseline_seizure_count = 4
+
+# number of trials to calculate endpoint statistics over
+num_trials = 5000
+
+# parameters for generating histogram and log-log plot
 min_num_weeks = 24
 max_num_weeks = 120
 num_patients = 10000
 
 start_time_in_seconds = time.time()
 
+# calculate the endpoint statistics under given RCT design parameters
 [placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std,
  drug_RR50_mean,    drug_RR50_std,    drug_MPC_mean,    drug_MPC_std    ] = \
     calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta, 
@@ -675,15 +846,18 @@ start_time_in_seconds = time.time()
                                                        num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
                                                        time_scale_conversion, min_required_baseline_seizure_count, num_trials)
 
+# calculate statistical features of synthetic patient population generated by NV model
 [median_monthly_seizure_frequency, log_log_slope, log_log_intercept, r_value,
  monthly_seizure_frequencies, biweekly_log10means, biweekly_log10stds] = \
     get_patient_population_statistical_features(shape, scale, alpha, beta, 
                                                 min_num_weeks, max_num_weeks, 
                                                 num_patients)
 
-stop_time_in_seconds = time.time()
-print((stop_time_in_seconds - start_time_in_seconds)/60)
 
+stop_time_in_seconds = time.time()
+total_time_in_seconds = stop_time_in_seconds - start_time_in_seconds
+total_time_in_minutes = total_time_in_seconds/60
+print( 'cpu time: ' +  np.round( str( total_time_in_minutes, 3 ) ) + ' minutes' )
 
 '''
 with open( os.getcwd() + '/data.txt' ) as text_file:
