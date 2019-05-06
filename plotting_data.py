@@ -324,9 +324,9 @@ def plot_endpoint_responses(placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mea
                             decimal_round):
     '''
 
-    This function plots a horizontal bar chart of the endpoint response statistics in the same 
-
-    folder as this Python script.
+    This function saves a PNG file of the horizontal bar chart of the endpoint response statistics 
+    
+    in the same folder as this Python script.
 
     Inputs:
 

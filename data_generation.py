@@ -11,7 +11,7 @@ def generate_patient(shape, scale, alpha, beta,
                      min_required_baseline_seizure_count):
     '''
 
-    This function randomly generate one sythetic patient's seizure diary as according to the NV model.
+    This function randomly generates one sythetic patient's seizure diary as according to the NV model.
 
     Inputs:
 
@@ -818,12 +818,42 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
         raise ValueError('The placebo effect distribution is too likely to generate placebo effects greater than 100% \n(drug_effect_mu + 1.96*drug_effect_sigma > 1)')
 
 
+def store_data_as_list_in_json_file(data_as_list, file_name):
+    '''
+
+    Inputs:
+
+        1) data_as_list:
+
+            (List) - the data to be stored in the JSON file; this data must be stored
+                     
+                     as a Python List, not a Numpy array: Numpy arrays aren't compatible
+
+                     with the JSON API
+
+        2) file_name
+
+            (string) - the name of the file that the data will be stored in
+
+    Outputs:
+
+        Technically None
+
+    '''
+
+    # open/create the JSON file that the data will be written to
+    with open( os.getcwd() + '/' + file_name + '.json', 'w+') as json_file:
+
+        # write the data to the JSON file
+        json.dump(data_as_list, json_file)
+
+
 def generate_and_store_data(shape, scale, alpha, beta, 
                             placebo_effect_mu, placebo_effect_sigma, drug_effect_mu, drug_effect_sigma, 
                             time_scale_conversion, num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
                             min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
                             endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
-                            biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_file_name):
+                            biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_filename):
     '''
 
     This function generates and stores the data needed to create the histogram of monthly seizure frequencies, the scatter plot
@@ -948,7 +978,7 @@ def generate_and_store_data(shape, scale, alpha, beta,
                         
                         count standard deviations of the synthetic patient population
 
-        23) patient_population_weekly_seizure_counts_file_name:
+        23) patient_population_weekly_seizure_counts_filename:
 
             (string) - the file name of the JSON which will store the weekly seizure diaries of the synthetic patient
 
@@ -984,34 +1014,22 @@ def generate_and_store_data(shape, scale, alpha, beta,
     log_log_histogram_numbers = np.array([median_monthly_seizure_frequency, log_log_slope, log_log_intercept, r_value])
 
     # store the endpoint statistics into a JSON file
-    with open( os.getcwd() + '/' + endpoint_statistics_filename + '.json', 'w+' ) as text_file:
-
-        json.dump(endpoint_statistics.tolist(), text_file)
+    store_data_as_list_in_json_file(endpoint_statistics.tolist(), endpoint_statistics_filename)
 
     # store the scalar numbers needed to plot the histogram and log-log plot into a JSON file
-    with open( os.getcwd() + '/' + log_log_histogram_numbers_filename + '.json', 'w+' ) as text_file:
-
-        json.dump(log_log_histogram_numbers.tolist(), text_file)
-
+    store_data_as_list_in_json_file(log_log_histogram_numbers.tolist(), log_log_histogram_numbers_filename)
+    
     # store the monthly seizure frequencies into a JSON file
-    with open( os.getcwd() + '/' + monthly_seizure_frequencies_filename + '.json', 'w+' ) as text_file:
-
-        json.dump(monthly_seizure_frequencies.tolist(), text_file)
+    store_data_as_list_in_json_file(monthly_seizure_frequencies.tolist(), monthly_seizure_frequencies_filename)
 
     # store the base 10 logarithms of the biweekly seizure count means into a JSON file
-    with open( os.getcwd() + '/' + biweekly_log10means_filename + '.json', 'w+' ) as text_file:
-
-        json.dump(biweekly_log10means.tolist(), text_file)
+    store_data_as_list_in_json_file(biweekly_log10means.tolist(), biweekly_log10means_filename)
 
     # store the base 10 logarithms of the biweekly seizure count standard deviations into a JSON file
-    with open( os.getcwd() + '/' + biweekly_log10stds_filename + '.json', 'w+' ) as text_file:
+    store_data_as_list_in_json_file(biweekly_log10stds.tolist(), biweekly_log10stds_filename)
 
-        json.dump(biweekly_log10stds.tolist(), text_file)
-    
     # store the weekly seizure diaries of the synthetic patient population
-    with open( os.getcwd() + '/' + patient_population_weekly_seizure_counts_file_name + '.json', 'w+') as text_file:
-
-        json.dump(patient_population_weekly_seizure_counts, text_file)
+    store_data_as_list_in_json_file(patient_population_weekly_seizure_counts, patient_population_weekly_seizure_counts_filename)
 
 
 if (__name__ == '__main__'):
