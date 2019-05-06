@@ -160,6 +160,10 @@ def get_patient_statistical_features(shape, scale, alpha, beta,
         3) monthly_seizure_frequency:
 
             (float) - the monthly seizure count mean of one syntheic patient
+        
+        4) patient_weekly_seizure_counts:
+
+            (1D Numpy array) - one synthetic patient's weekly seizure diary
 
     '''
 
@@ -191,7 +195,7 @@ def get_patient_statistical_features(shape, scale, alpha, beta,
     # calculate the omnthly seizure count mean
     monthly_seizure_frequency = np.mean(patient_monthly_seizure_counts)
     
-    return [biweekly_log10mean, biweekly_log10std, monthly_seizure_frequency]
+    return [biweekly_log10mean, biweekly_log10std, monthly_seizure_frequency, patient_weekly_seizure_counts]
 
 
 def get_patient_population_statistical_features(shape, scale, alpha, beta, 
@@ -273,11 +277,15 @@ def get_patient_population_statistical_features(shape, scale, alpha, beta,
         
                                patient population which is used to construct the log-log plot
 
-        biweekly_log10stds
+        7) biweekly_log10stds:
 
             (1D Numpy array) - the array of base 10 logarithms of biweekly seizure count standard deviations from one generated 
             
                                synthetic patient population which is used to construct the log-log plot
+        
+        8) patient_population_weekly_seizure_counts:
+
+            (List of Lists of integers) - A list of all the weekly seizure diaries from the synthetic patient population
 
     '''
 
@@ -290,6 +298,10 @@ def get_patient_population_statistical_features(shape, scale, alpha, beta,
     # initialize the array of monthly seizure frequencies
     monthly_seizure_frequencies = np.zeros(num_patients)
 
+    # initialize the Python list of synthetic patients' weekly seizure diaries
+    # it has to be a Python list instead of a Numpy array because of the randomized seizure diary length
+    patient_population_weekly_seizure_counts = []
+
     # for each patient in the synthetic patient population:
     for patient_index in range(num_patients):
     
@@ -297,7 +309,7 @@ def get_patient_population_statistical_features(shape, scale, alpha, beta,
         #   1) base 10 logarithm of biweekly mean
         #   2) base 10 logarithm of biweekly standard deviation
         #   3) monthly seizure count mean
-        [biweekly_log10mean, biweekly_log10std, monthly_seizure_frequency] = \
+        [biweekly_log10mean, biweekly_log10std, monthly_seizure_frequency, patient_weekly_seizure_counts] = \
                         get_patient_statistical_features(shape, scale, alpha, beta,
                                                          min_num_weeks, max_num_weeks)
     
@@ -306,13 +318,17 @@ def get_patient_population_statistical_features(shape, scale, alpha, beta,
         biweekly_log10stds[patient_index] = biweekly_log10std
         monthly_seizure_frequencies[patient_index] = monthly_seizure_frequency
 
+        # store the synthetic patient's weekly seizure diary
+        patient_population_weekly_seizure_counts.append(patient_weekly_seizure_counts.tolist())
+
     # calculate the median monthly seizure frequency
     median_monthly_seizure_frequency = np.median(monthly_seizure_frequencies)
 
     # use linear regression to estimate the slope, intercept and correlation coefficient of log-log plot of biweekly mean vs biweekly standard deviation
     [log_log_slope, log_log_intercept, r_value, _, _] = stats.linregress(biweekly_log10means, biweekly_log10stds)
     
-    return [median_monthly_seizure_frequency, log_log_slope, log_log_intercept, r_value, monthly_seizure_frequencies, biweekly_log10means, biweekly_log10stds]
+    return [median_monthly_seizure_frequency, log_log_slope,       log_log_intercept,  r_value, 
+            monthly_seizure_frequencies,      biweekly_log10means, biweekly_log10stds, patient_population_weekly_seizure_counts]
 
 
 def apply_effect(effect_mu, effect_sigma,
@@ -807,7 +823,7 @@ def generate_and_store_data(shape, scale, alpha, beta,
                             time_scale_conversion, num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
                             min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
                             endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
-                            biweekly_log10means_filename, biweekly_log10stds_filename):
+                            biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_file_name):
     '''
 
     This function generates and stores the data needed to create the histogram of monthly seizure frequencies, the scatter plot
@@ -932,6 +948,16 @@ def generate_and_store_data(shape, scale, alpha, beta,
                         
                         count standard deviations of the synthetic patient population
 
+        23) patient_population_weekly_seizure_counts_file_name:
+
+            (string) - the file name of the JSON which will store the weekly seizure diaries of the synthetic patient
+
+                       population
+        
+    Outputs:
+
+        Technically None
+
     '''
 
     # calculate the endpoint statistics under given RCT design parameters
@@ -948,8 +974,8 @@ def generate_and_store_data(shape, scale, alpha, beta,
                                     drug_RR50_mean,    drug_RR50_std,    drug_MPC_mean,    drug_MPC_std    ])
 
     # calculate statistical features of synthetic patient population generated by NV model
-    [median_monthly_seizure_frequency, log_log_slope, log_log_intercept, r_value,
-    monthly_seizure_frequencies, biweekly_log10means, biweekly_log10stds] = \
+    [median_monthly_seizure_frequency, log_log_slope,       log_log_intercept,  r_value, 
+     monthly_seizure_frequencies,      biweekly_log10means, biweekly_log10stds, patient_population_weekly_seizure_counts] = \
         get_patient_population_statistical_features(shape, scale, alpha, beta, 
                                                     min_num_weeks, max_num_weeks, 
                                                     num_patients)
@@ -981,6 +1007,11 @@ def generate_and_store_data(shape, scale, alpha, beta,
     with open( os.getcwd() + '/' + biweekly_log10stds_filename + '.json', 'w+' ) as text_file:
 
         json.dump(biweekly_log10stds.tolist(), text_file)
+    
+    # store the weekly seizure diaries of the synthetic patient population
+    with open( os.getcwd() + '/' + patient_population_weekly_seizure_counts_file_name + '.json', 'w+') as text_file:
+
+        json.dump(patient_population_weekly_seizure_counts, text_file)
 
 
 if (__name__ == '__main__'):
