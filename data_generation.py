@@ -247,37 +247,37 @@ def get_patient_population_statistical_features(shape, scale, alpha, beta,
 
             (float) - the slope of the line of best fit on the log-log plot of biweekly seizure count man vs biweekly 
             
-                      seizure count standard deviation
+                      seizure count standard deviation from one generated synthetic patient population
 
         3) log_log_intercept:
 
             (float) - the intercept of the line of best fit on the log-log plot of biweekly seizure count man vs biweekly 
                       
-                      seizure count standard deviation
+                      seizure count standard deviation from one generated synthetic patient population
 
         4) r_value:
 
             (float) - the correlation of the line of best fit on the log-log plot of biweekly seizure count man vs biweekly 
                       
-                      seizure count standard deviation
+                      seizure count standard deviation from one generated synthetic patient population
 
         5) monthly_seizure_frequencies:
 
-            (1D Numpy array) - the array of mnthly seizure frequencies from which the median monthly seizure frequency 
-                               
-                               was estimated
+            (1D Numpy array) - the array of monthly seizure frequencies from one generated synthetic patient population for 
+            
+                               which the median monthly seizure frequency was estimated
         
         6) biweekly_log10means:
         
-            (1D Numpy array) - the array of base 10 logarithms of biweekly seizure count means used to construct 
-                               
-                               the log-log plot
+            (1D Numpy array) - the array of base 10 logarithms of biweekly seizure count means from one generated synthetic 
+        
+                               patient population which is used to construct the log-log plot
 
         biweekly_log10stds
 
-            (1D Numpy array) - the array of base 10 logarithms of biweekly seizure count standard deviations used to 
+            (1D Numpy array) - the array of base 10 logarithms of biweekly seizure count standard deviations from one generated 
             
-                               construct the log-log plot
+                               synthetic patient population which is used to construct the log-log plot
 
     '''
 
@@ -982,59 +982,62 @@ def generate_and_store_data(shape, scale, alpha, beta,
 
         json.dump(biweekly_log10stds.tolist(), text_file)
 
-# group level parameters of NV model
-shape= 24.143
-scale = 297.366
-alpha = 284.024
-beta = 369.628
 
-# parameters determining distribution of placebo effects and drug efficacies
-placebo_effect_mu = 0
-placebo_effect_sigma = 0
-drug_effect_mu = 0.2
-drug_effect_sigma = 0.05
+if (__name__ == '__main__'):
 
-# tell the algorithm to generate weekly seizure counts
-time_scale_conversion = 7
+    # group level parameters of NV model
+    shape= 24.143
+    scale = 297.366
+    alpha = 284.024
+    beta = 369.628
 
-# RCT design parameters
-num_patients_per_arm = 153
-num_baseline_intervals = 8
-num_testing_intervals = 12
+    # parameters determining distribution of placebo effects and drug efficacies
+    placebo_effect_mu = 0
+    placebo_effect_sigma = 0
+    drug_effect_mu = 0.2
+    drug_effect_sigma = 0.05
 
-# eligibility criteria
-min_required_baseline_seizure_count = 4
+    # tell the algorithm to generate weekly seizure counts
+    time_scale_conversion = 7
 
-# number of trials to calculate endpoint statistics over
-num_trials = 5000
+    # RCT design parameters
+    num_patients_per_arm = 153
+    num_baseline_intervals = 8
+    num_testing_intervals = 12
 
-# parameters for generating histogram and log-log plot
-min_num_weeks = 24
-max_num_weeks = 120
-num_patients = 10000
-'''
-RuntimeWarning: divide by zero encountered in log10
-'''
+    # eligibility criteria
+    min_required_baseline_seizure_count = 4
 
-# file names of json files which store information to be plotted
-endpoint_statistics_filename = 'endpoint_statistics'
-log_log_histogram_numbers_filename = 'log_log_histogram_numbers'
-monthly_seizure_frequencies_filename = 'monthly_seizure_frequencies'
-biweekly_log10means_filename = 'biweekly_log10means'
-biweekly_log10stds_filename = 'biweekly_log10stds'
+    # number of trials to calculate endpoint statistics over
+    num_trials = 5000
 
-start_time_in_seconds = time.time()
+    # parameters for generating histogram and log-log plot
+    min_num_weeks = 24
+    max_num_weeks = 120
+    num_patients = 10000
+    '''
+    RuntimeWarning: divide by zero encountered in log10
+    '''
 
-generate_and_store_data(shape, scale, alpha, beta, 
-                        placebo_effect_mu, placebo_effect_sigma, drug_effect_mu, drug_effect_sigma, 
-                        time_scale_conversion, num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
-                        min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
-                        endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
-                        biweekly_log10means_filename, biweekly_log10stds_filename)
+    # file names of json files which store information to be plotted
+    endpoint_statistics_filename = 'endpoint_statistics'
+    log_log_histogram_numbers_filename = 'log_log_histogram_numbers'
+    monthly_seizure_frequencies_filename = 'monthly_seizure_frequencies'
+    biweekly_log10means_filename = 'biweekly_log10means'
+    biweekly_log10stds_filename = 'biweekly_log10stds'
 
-stop_time_in_seconds = time.time()
-total_time_in_seconds = stop_time_in_seconds - start_time_in_seconds
-total_time_in_minutes = total_time_in_seconds/60
-print( '\n\ncpu time: ' +  str( np.round( total_time_in_minutes, 3 ) ) + ' minutes\n\n' )
+    start_time_in_seconds = time.time()
+
+    generate_and_store_data(shape, scale, alpha, beta, 
+                            placebo_effect_mu, placebo_effect_sigma, drug_effect_mu, drug_effect_sigma, 
+                            time_scale_conversion, num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
+                            min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
+                            endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
+                            biweekly_log10means_filename, biweekly_log10stds_filename)
+
+    stop_time_in_seconds = time.time()
+    total_time_in_seconds = stop_time_in_seconds - start_time_in_seconds
+    total_time_in_minutes = total_time_in_seconds/60
+    print( '\n\ncpu time: ' +  str( np.round( total_time_in_minutes, 3 ) ) + ' minutes\n\n' )
 
 
