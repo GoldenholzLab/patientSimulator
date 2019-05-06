@@ -1056,6 +1056,7 @@ if (__name__ == '__main__'):
     monthly_seizure_frequencies_filename = 'monthly_seizure_frequencies'
     biweekly_log10means_filename = 'biweekly_log10means'
     biweekly_log10stds_filename = 'biweekly_log10stds'
+    patient_population_weekly_seizure_counts_file_name = 'synthetic_patient_population'
 
     start_time_in_seconds = time.time()
 
@@ -1064,7 +1065,7 @@ if (__name__ == '__main__'):
                             time_scale_conversion, num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
                             min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
                             endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
-                            biweekly_log10means_filename, biweekly_log10stds_filename)
+                            biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_file_name)
 
     stop_time_in_seconds = time.time()
     total_time_in_seconds = stop_time_in_seconds - start_time_in_seconds
