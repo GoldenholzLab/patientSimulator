@@ -850,11 +850,11 @@ def store_data_as_list_in_json_file(data_as_list, file_name):
 
         1) data_as_list:
 
-            (List) - the data to be stored in the JSON file; this data must be stored
+            (List or number (int, float, etc.) ) - the data to be stored in the JSON file; arrays must be stored
                      
-                     as a Python List, not a Numpy array: Numpy arrays aren't compatible
+                                                   as a Python List, not a Numpy array: Numpy arrays aren't compatible
 
-                     with the JSON API
+                                                   with the JSON API
 
         2) file_name
 
@@ -879,7 +879,8 @@ def generate_and_store_data(shape, scale, alpha, beta,
                             min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
                             endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
                             biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_filename,
-                            placebo_RR50_array_filename, placebo_MPC_array_filename, drug_RR50_array_filename, drug_MPC_array_filename):
+                            placebo_RR50_array_filename, placebo_MPC_array_filename, drug_RR50_array_filename, drug_MPC_array_filename,
+                            num_patients_per_arm_filename):
     '''
 
     This function generates and stores the data needed to create the histogram of monthly seizure frequencies, the scatter plot
@@ -1095,6 +1096,9 @@ def generate_and_store_data(shape, scale, alpha, beta,
     # store the array of median percent changes from the drug arm of all trials
     store_data_as_list_in_json_file(drug_MPC_array.tolist(), drug_MPC_array_filename)
 
+    # store the number of patients generated per trial arm
+    store_data_as_list_in_json_file(num_patients_per_arm, num_patients_per_arm_filename)
+
 
 if (__name__ == '__main__'):
 
@@ -1143,6 +1147,7 @@ if (__name__ == '__main__'):
     placebo_MPC_array_filename = 'placebo_MPC_array'
     drug_RR50_array_filename = 'drug_RR50_array'
     drug_MPC_array_filename = 'drug_MPC_array'
+    num_patients_per_arm_filename = 'num_patients_per_arm'
     
 
     start_time_in_seconds = time.time()
@@ -1153,7 +1158,8 @@ if (__name__ == '__main__'):
                             min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
                             endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
                             biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_filename,
-                            placebo_RR50_array_filename, placebo_MPC_array_filename, drug_RR50_array_filename, drug_MPC_array_filename)
+                            placebo_RR50_array_filename, placebo_MPC_array_filename, drug_RR50_array_filename, drug_MPC_array_filename,
+                            num_patients_per_arm_filename)
 
     stop_time_in_seconds = time.time()
     total_time_in_seconds = stop_time_in_seconds - start_time_in_seconds
