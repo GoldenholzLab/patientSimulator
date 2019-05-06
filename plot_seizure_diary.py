@@ -34,7 +34,7 @@ def load_patient(patient_population_weekly_seizure_counts_file_name, patient_num
     '''
 
     # locate the JSON file containing the synthetic patient population
-    with open(os.getcwd() + '/' + patient_population_weekly_seizure_counts_file_name + '.json') as json_file:
+    with open(os.getcwd() + '/' + patient_population_weekly_seizure_counts_file_name + '.json', 'r') as json_file:
 
         # read the entire population into a List of seizure diaries
         patient_population_weekly_seizure_counts = json.load(json_file)

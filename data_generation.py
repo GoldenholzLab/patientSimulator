@@ -588,6 +588,14 @@ def calculate_endpoint_statistics(shape, scale, alpha, beta,
         4) MPC_std:
 
             (float) - the standard deviation of the median percent change of one arm of a trial over N (N = num_trials) trials
+        
+        5) RR50_array:
+
+            (1D Numpy array) - array of 50% responder rates from all N trials over which the mean and standard deviation was calculated
+        
+        6) MPC_array:
+
+            (1D Numpy array) - array of median percent changes from all N trials over which the mean and standard deviation was calculated
 
     '''
 
@@ -642,7 +650,7 @@ def calculate_endpoint_statistics(shape, scale, alpha, beta,
     MPC_mean = np.mean(MPC_array)
     MPC_std = np.std(MPC_array)
 
-    return [RR50_mean, RR50_std, MPC_mean, MPC_std]
+    return [RR50_mean, RR50_std, MPC_mean, MPC_std, RR50_array, MPC_array]
 
 
 def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta, 
@@ -772,6 +780,22 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
 
             (float) - the standard deviation of the median percent change of the drug arm over N (N = num_trials) trials
 
+        9) placebo_RR50_array:
+
+            (1D Numpy array) - array of 50% responder rates from placebo arm of all N (N = num_trials) trials
+        
+        10) placebo_MPC_array:
+
+            (1D Numpy array) - array of median percent changes from placebo arm of all N (N = num_trials) trials
+        
+        11) drug_RR50_array:
+
+            (1D Numpy array) - array of 50% responder rates from drug arm of all N (N = num_trials) trials
+        
+        12) drug_MPC_array:
+
+            (1D Numpy array) - array of median percent changes from drug arm of all N (N = num_trials) trials
+
     '''
     
     # calculate the upper bound on the 95% confidence interval for the normally distributed drug efficacy
@@ -787,7 +811,7 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
         if( upper_confidence_bound_placebo <= 1):
     
             # calculate the endpoint statistics for the placebo arm
-            [placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std] = \
+            [placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std, placebo_RR50_array, placebo_MPC_array] = \
                 calculate_endpoint_statistics(shape, scale, alpha, beta, 
                                               placebo_effect_mu, placebo_effect_sigma,
                                               drug_effect_mu, drug_effect_sigma, False,
@@ -795,15 +819,16 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
                                               time_scale_conversion, min_required_baseline_seizure_count, num_trials)
 
             # calculate the endpoint statistics for the drug arm
-            [drug_RR50_mean, drug_RR50_std, drug_MPC_mean, drug_MPC_std] = \
+            [drug_RR50_mean, drug_RR50_std, drug_MPC_mean, drug_MPC_std, drug_RR50_array, drug_MPC_array] = \
                 calculate_endpoint_statistics(shape, scale, alpha, beta, 
                                               placebo_effect_mu, placebo_effect_sigma,
                                               drug_effect_mu, drug_effect_sigma, True,
                                               num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
                                               time_scale_conversion, min_required_baseline_seizure_count, num_trials)
     
-            return [placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std,
-                    drug_RR50_mean,    drug_RR50_std,    drug_MPC_mean,    drug_MPC_std]
+            return [placebo_RR50_mean,  placebo_RR50_std,  placebo_MPC_mean, placebo_MPC_std,
+                    drug_RR50_mean,     drug_RR50_std,     drug_MPC_mean,    drug_MPC_std,
+                    placebo_RR50_array, placebo_MPC_array, drug_RR50_array,  drug_MPC_array]
         
         # if the upper bound of the 95% confidence interval for the placebo effect is greater than 1:
         else:
@@ -853,7 +878,8 @@ def generate_and_store_data(shape, scale, alpha, beta,
                             time_scale_conversion, num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
                             min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
                             endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
-                            biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_filename):
+                            biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_filename,
+                            placebo_RR50_array_filename, placebo_MPC_array_filename, drug_RR50_array_filename, drug_MPC_array_filename):
     '''
 
     This function generates and stores the data needed to create the histogram of monthly seizure frequencies, the scatter plot
@@ -984,6 +1010,31 @@ def generate_and_store_data(shape, scale, alpha, beta,
 
                        population
         
+        24) placebo_RR50_array_filename:
+
+            (string) - the file name of the JSON file will store the array of 50% responder rates from the placebo arm
+
+                       over all N (N = num_trials) trials
+
+        25) placebo_MPC_array_filename:
+
+            (string) - the file name of the JSON file will store the array of median percent changes from the placebo arm
+
+                       over all N (N = num_trials) trials
+        
+        26) drug_RR50_array_filename:
+
+            (string) - the file name of the JSON file will store the array of 50% responder rates from the drug arm
+
+                       over all N (N = num_trials) trials
+        
+        27) drug_MPC_array_filename:
+
+            (string) - the file name of the JSON file will store the array of median percent changes from the drug arm
+
+                       over all N (N = num_trials) trials
+
+
     Outputs:
 
         Technically None
@@ -991,8 +1042,9 @@ def generate_and_store_data(shape, scale, alpha, beta,
     '''
 
     # calculate the endpoint statistics under given RCT design parameters
-    [placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std,
-     drug_RR50_mean,    drug_RR50_std,    drug_MPC_mean,    drug_MPC_std    ] = \
+    [placebo_RR50_mean,  placebo_RR50_std,  placebo_MPC_mean, placebo_MPC_std,
+     drug_RR50_mean,     drug_RR50_std,     drug_MPC_mean,    drug_MPC_std,
+     placebo_RR50_array, placebo_MPC_array, drug_RR50_array,  drug_MPC_array] = \
         calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta, 
                                                            placebo_effect_mu, placebo_effect_sigma,
                                                            drug_effect_mu, drug_effect_sigma, 
@@ -1030,6 +1082,18 @@ def generate_and_store_data(shape, scale, alpha, beta,
 
     # store the weekly seizure diaries of the synthetic patient population
     store_data_as_list_in_json_file(patient_population_weekly_seizure_counts, patient_population_weekly_seizure_counts_filename)
+
+    # store the array of 50% responder rates from the placebo arm of all trials
+    store_data_as_list_in_json_file(placebo_RR50_array.tolist(), placebo_RR50_array_filename)
+
+    # store the array of median percent changes from the drug arm of all trials
+    store_data_as_list_in_json_file(placebo_MPC_array.tolist(), placebo_MPC_array_filename)
+
+    # store the array of 50% responder rates from the drug arm of all trials
+    store_data_as_list_in_json_file(drug_RR50_array.tolist(), drug_RR50_array_filename)
+
+    # store the array of median percent changes from the drug arm of all trials
+    store_data_as_list_in_json_file(drug_MPC_array.tolist(), drug_MPC_array_filename)
 
 
 if (__name__ == '__main__'):
@@ -1074,7 +1138,12 @@ if (__name__ == '__main__'):
     monthly_seizure_frequencies_filename = 'monthly_seizure_frequencies'
     biweekly_log10means_filename = 'biweekly_log10means'
     biweekly_log10stds_filename = 'biweekly_log10stds'
-    patient_population_weekly_seizure_counts_file_name = 'synthetic_patient_population'
+    patient_population_weekly_seizure_counts_filename = 'synthetic_patient_population'
+    placebo_RR50_array_filename = 'placebo_RR50_array'
+    placebo_MPC_array_filename = 'placebo_MPC_array'
+    drug_RR50_array_filename = 'drug_RR50_array'
+    drug_MPC_array_filename = 'drug_MPC_array'
+    
 
     start_time_in_seconds = time.time()
 
@@ -1083,7 +1152,8 @@ if (__name__ == '__main__'):
                             time_scale_conversion, num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
                             min_required_baseline_seizure_count, num_trials, min_num_weeks, max_num_weeks, num_patients, 
                             endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
-                            biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_file_name)
+                            biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_filename,
+                            placebo_RR50_array_filename, placebo_MPC_array_filename, drug_RR50_array_filename, drug_MPC_array_filename)
 
     stop_time_in_seconds = time.time()
     total_time_in_seconds = stop_time_in_seconds - start_time_in_seconds
