@@ -5,6 +5,15 @@ import os
 import json
 import textwrap
 
+'''
+
+This script plots figures 1, 2, and 4 from the paper associated with this repository. It assumes the existence of
+
+all the needed JSON files containing the relevant information in the same folder as this Python script. If those don;t
+
+exist, generate them with the data_generation.py script.
+
+'''
 
 def load_array_from_json_file(json_file_name):
     '''

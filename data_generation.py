@@ -4,6 +4,17 @@ import os
 import json
 import time
 
+'''
+
+This script is the main workhose of this repository: it generates all the data needed in order to
+
+create the relevant plots. This script generates the data before storing all of it inside JSON files which 
+
+will later be read by the other plotting scripts. These JSON files are put inside the same folder as this
+
+Python script. This script should take less than 10 minutes to run.
+
+'''
 
 def generate_patient(shape, scale, alpha, beta,
                      time_scale_conversion, 

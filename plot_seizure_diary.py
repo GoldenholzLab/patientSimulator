@@ -6,6 +6,27 @@ import textwrap
 import sys
 import os
 
+'''
+
+This script plots figure 3 from the paper associated with this repository. It assumes the existence of all the 
+
+needed JSON files containing the relevant information in the same folder as this Python script. If those don;t
+
+exist, generate them with the data_generation.py script. It is recommended to run this from the command line
+
+with the following command:
+
+
+                    $ python plot_patient.py <patient_ID_number>
+
+The patient_ID_number parameter is the ID number of the patient to plotted with respect to the entire synthetic
+
+patient population used to generate figures 1 and 2 of the paper associated with this repository. Assuming nothing
+
+was changed in the data_generation.py script, the total number of synthetic patients should be exactly 10,000 patients.
+
+'''
+
 def load_patient(patient_population_weekly_seizure_counts_file_name, patient_num_id):
     '''
 
