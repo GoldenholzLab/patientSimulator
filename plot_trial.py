@@ -18,7 +18,7 @@ with the following command:
 
                     $ python plot_trial.py <trial_ID_number>
 
-The patient_ID_number parameter is the ID number of the patient to plotted with respect to the entire synthetic
+The trial_ID_number parameter is the ID number of the patient to plotted with respect to the entire synthetic
 
 patient population used to generate figures 1 and 2 of the paper associated with this repository. Assuming nothing
 
