@@ -7,56 +7,57 @@ WHAT IS THIS REPOSITORY FOR?:
 
 In order to generate one patient:
 
-    The PatientClass.py script is responsible for generating one synthetic patient. In order to use this code 
-    in a customized script, the PatientClass.py script must be imported as 'from PatientClass import Patient'.
-    This will allow the customized script to instantiate a Patient object. The first four parameters inputted to
-    the initialization of the Patient object are the group level parameters for the NV model. It is recommended to
-    to use [PARAMETERS], which are the optimal parameters published in the [NAME] paper as according to NV model.
+    The data_generation.py script has a function called generate_patient(). The documentation within the function says more,
+    but essentially, you have to eenter the NV model parameters along with the lengths of the baseline and testing period 
+    (the baseline period can be made to have a length of zero if need be).
+
 
 In order to generate one trial:
 
     The TrialArmClass script is responsible for generating one arm of a clinical trial consisiting of synthetic patients. 
     In order to use this code in a customized script, the TrialArmClass.py script must be imported as 'from TrialArmClass 
     import TrialArm'. This will allow the customized script to instantiate a TrialArm object. The first four parameters 
-    inputted to the initialization of the Patient object are the group level parameters for the NV model. It is recommended∂
+    inputted to the initialization of the Patient object are the group level parameters for the NV model. It is recommended
     to use [PARAMETERS], which are the optimal parameters published in the [NAME] paper as according to NV model.
+
 
 In order to generate the graphs associated with the [NAME HERE] paper:
 
-    The testingTrialResults.py script is responsible for generating the graphs in the NAME HERE] paper. All that needs to be 
-    done is to run it once, although it is not unusual for the script to take up to an hour in order to generate all the trials 
-    of synthetic patients needed for the RCT analysis.
+    Run these scripts from the command line with the following commands in this order:
 
+        $ python data_generation.py
+        $ python plotting_data.py
+        $ python plot_seizure_diary.py <patient_ID_number>
+        $ python plot_trial.py <trial_ID_number>
+    
+    The documentation within the third and fourth scripts says more about what their command line arguments are, but those are 
+    essentially the ID numbers of the patient and trial plotted in figures 3 and 5, respectively. Assuming everything executes
+    correctly, the entire process should take less than 10 minutes and should generate several JSON files as well as the
+    relevant figures. It is important that these scripts are all in the same folder when they are used to generate figures from
+    scratch: the data_generation.py stores the simulated data within JSON files, and the other scripts read the JSON files
+    in order to plot that data. Both scripts assume that the JSON files are in the same folder as the currently running script.
 
-testingTrialResults.py
+data_generation.py
 
-    This is the main script which generates the graphs in the paper associated with this repository. It has 
-    dependencies on TrialArmClass.py, PatientClass.py, seizureMods.py, RR50Test.py, and MPCTest.py
+    This script generates all the JSON files which contain the necessary information for creating the figures
+    from the paper.
 
-TrialArmClass.py
+plotting_data.py
 
-    This script provides the code for generating clinical trials of synthetic patients according to NV model. 
-    It has dependencies on the PatientClass.py and seizureMods.py scripts.
+    This script plots figures 1, 2, and 4 from the paper, assuming the relevant JSON files are already in the same folder. This script takes
+    no command line arguments.
 
-PatientClass.py
+plot_seizure_diary.py
 
-    This script provides the code for generating one individual synthetic patient according to NV model. It 
-    has a dependency on seizureMods.py.
+    This script plots figure 3 from the paper, assuming the relevant JSON files are already in the same folder. It takes one command line
+    argument: the ID number of the patient whose seizure diary is to be plotted. This ID number is with respect to all of the other patients
+    whose data were used to create figures 1 and 2 from the paper.
 
-seizureMods.py
+plot_trial.py
 
-    This script provides utility functions for applying the drug effect to synthetic patients as well as
-    making sure patients comply with the RCT parameters if they are generated within the context of a trial.
-
-RR50Test.py
-
-    This script provides functions which evaluate the RR50 (50% responder rate) as well as the p-value (statistical significance)
-    associated with the RR50, as according to the Fisher Exact test.
-
-MPCTest.py
-
-    This script provides functions which evaluate the MPC (median percent change) as well as the p-value (statistical significance)
-    associated with the MPC, as according to the Wilcoxon Signed Rank Test.
+    This script plots figure 5 from the paper, assuming the relevant JSON files are already in the same folder. It takes one command line
+    argument: the ID number of the trial to be plotted. This ID number is with respect to all of the other trials whose data were used 
+    to create figure 4 from the paper.
 
 param_expl.py
 
@@ -66,7 +67,7 @@ param_expl.py
 
 param_expl_wrap.sh
 
-    This is a shell wrapper script for submitting the param_expl.py script as batch job to the Harvard Medical School O2 computing cluster.
+    This is a shell wrapper script for submitting the param_expl.py script as a batch job to the Harvard Medical School O2 computing cluster.
 
 param_expl_wrap_coordinator.sh
 
