@@ -3,7 +3,8 @@ synthetic patient seizure diary simulator and RCT simulator
 
 WHAT IS THIS REPOSITORY FOR?:
 
-    This repository is meant
+    This repository is meant for providing access to the code which implemented the mathematical model presented in the 
+    Seizure Diary Simulator paper.
 
 In order to generate one patient:
 
@@ -14,14 +15,10 @@ In order to generate one patient:
 
 In order to generate one trial:
 
-    The TrialArmClass script is responsible for generating one arm of a clinical trial consisiting of synthetic patients. 
-    In order to use this code in a customized script, the TrialArmClass.py script must be imported as 'from TrialArmClass 
-    import TrialArm'. This will allow the customized script to instantiate a TrialArm object. The first four parameters 
-    inputted to the initialization of the Patient object are the group level parameters for the NV model. It is recommended
-    to use [PARAMETERS], which are the optimal parameters published in the [NAME] paper as according to NV model.
+    TODO
 
 
-In order to generate the graphs associated with the [NAME HERE] paper:
+In order to generate the graphs associated with the Seizure Diary Simulator paper:
 
     Run these scripts from the command line with the following commands in this order:
 
