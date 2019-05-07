@@ -442,6 +442,16 @@ def calculate_endpoints(seizure_counts, num_baseline_intervals, num_patients_per
         2) MPC:
 
             (float) - the median percent change of all the patients in the arm of one trial
+        
+        3) num_50_responders:
+            
+            (int) - the number of patients in the arm of one trial whose percent change was 
+                    
+                    greater than 50% (in the direction of less seizures)
+        
+        4) percent_changes:
+
+            (1D Numpy array) - array of percent changes of each patient from one arm of one trial
 
     '''
 
@@ -466,11 +476,14 @@ def calculate_endpoints(seizure_counts, num_baseline_intervals, num_patients_per
     # calculate the percent change between the baseline and testing periods for all patients
     percent_changes = np.divide(baseline_seizure_frequencies - testing_seizure_frequencies, baseline_seizure_frequencies)
     
+    # calculate the number of 50% responders
+    num_50_responders = np.sum(percent_changes >= 0.5)
+
     # calculate the 50% responder rate and median percent change across all the percent changes
-    RR50 = 100*np.sum(percent_changes >= 0.5)/num_patients_per_arm
+    RR50 = 100*num_50_responders/num_patients_per_arm
     MPC = 100*np.median(percent_changes)
     
-    return [RR50, MPC]
+    return [RR50, MPC, num_50_responders, percent_changes]
 
 
 def calculate_endpoint_statistics(shape, scale, alpha, beta, 
@@ -589,11 +602,21 @@ def calculate_endpoint_statistics(shape, scale, alpha, beta,
 
             (float) - the standard deviation of the median percent change of one arm of a trial over N (N = num_trials) trials
         
-        5) RR50_array:
+        5) num_50_responders_per_trial:
+        
+            (1D Numpy array) - a 1D array, with each entry being the number of 50% responders, per trial 
+
+        6) percent_changes_per_trial:
+
+            (2D Numpy array) - 2D array of percent changes from all trials, with the first index being the number of the trial (i.e., 
+            
+                               the trial ID number) and the second index being the number of the patient (i.e., the patient ID number)
+        
+        7) RR50_array:
 
             (1D Numpy array) - array of 50% responder rates from all N trials over which the mean and standard deviation was calculated
         
-        6) MPC_array:
+        8) MPC_array:
 
             (1D Numpy array) - array of median percent changes from all N trials over which the mean and standard deviation was calculated
 
@@ -607,6 +630,12 @@ def calculate_endpoint_statistics(shape, scale, alpha, beta,
 
     # initialize the array of median percent changes for each trial
     MPC_array = np.zeros(num_trials)
+    
+    # initialize the array which stores half of the contingency table for each trial
+    num_50_responders_per_trial = np.zeros(num_trials)
+
+    # initialize the 2D array which stores the percent changes from the arm of each trial
+    percent_changes_per_trial = np.zeros((num_trials, num_patients_per_arm))
 
     # for each simulated trial:
     for trial_index in range(num_trials):
@@ -636,11 +665,17 @@ def calculate_endpoint_statistics(shape, scale, alpha, beta,
                                                                 num_baseline_intervals, num_testing_intervals)
 
         # calculate the 50% responder rate and median percent change of all the patients in one trial arm
-        [RR50, MPC] = calculate_endpoints(seizure_counts, num_baseline_intervals, num_patients_per_arm)
+        [RR50, MPC, num_50_responders, percent_changes] = calculate_endpoints(seizure_counts, num_baseline_intervals, num_patients_per_arm)
     
         # store the 50% responder rate and median percent change within their respective arrays
         RR50_array[trial_index] = RR50
         MPC_array[trial_index] = MPC
+
+        # store the number of 50% responders per trial
+        num_50_responders_per_trial[trial_index] = num_50_responders
+
+        # store the percent changes per trial
+        percent_changes_per_trial[trial_index, :] = percent_changes
 
     # calculate the mean and standard deviation of the 50% responder rates over all the trials
     RR50_mean = np.mean(RR50_array)
@@ -650,7 +685,85 @@ def calculate_endpoint_statistics(shape, scale, alpha, beta,
     MPC_mean = np.mean(MPC_array)
     MPC_std = np.std(MPC_array)
 
-    return [RR50_mean, RR50_std, MPC_mean, MPC_std, RR50_array, MPC_array]
+    return [RR50_mean, RR50_std, MPC_mean, MPC_std, num_50_responders_per_trial, percent_changes_per_trial, RR50_array, MPC_array]
+
+
+def calculate_statistical_significances(placebo_num_50_responders, placebo_percent_changes,
+                                 drug_num_50_responders,    drug_percent_changes,
+                                 num_trials,                num_patients_per_arm):
+    '''
+
+    This function calculates the statistical significance of each trial for each endpoint (RR50, MPC).
+
+    Inputs:
+
+        1)placebo_num_50_responders:
+        
+            (1D Numpy array) - a 1D array, with each entry being the number of 50% responders for the placebo arm of each trial
+         
+        2) placebo_percent_changes:
+
+            (2D Numpy array) - 2D array of percent changes from the placebo arm of all trials, with the first index being the number 
+            
+                               of the trial (i.e., the trial ID number) and the second index being the number of the patient (i.e., 
+                               
+                               the patient ID number)
+        
+        3) drug_num_50_responders:
+        
+            (1D Numpy array) - a 1D array, with each entry being the number of 50% responders for the drug arm of each trial
+        
+        4) drug_percent_changes:
+
+            (2D Numpy array) - 2D array of percent changes from the drug arm of all trials, with the first index being the number 
+            
+                               of the trial (i.e., the trial ID number) and the second index being the number of the patient (i.e., 
+                               
+                               the patient ID number)
+        
+        5) num_trials:
+
+            (int) -  the number of trials that the endpoints are going to be averaged over
+        
+        6) num_patients_per_arm:
+
+            (int) - the number of patients for both the placebo arm and the drug arm of one trial
+
+    Outputs:
+
+        1) RR50_p_values:
+        
+            (1D Numpy array) - array of p-values for the 50% responder rates from each trial, as
+
+                               as according to the Fisher Exact Test 
+
+        2) MPC_p_values:
+
+            (1D Numpy array) - array of p-values for the median percent changes from each trial, as
+
+                               as according to the Wilcoxon Signed Rank Test
+
+    '''
+
+    # initialize the array of p-values for the 50% responder rate
+    RR50_p_values = np.zeros(num_trials)
+
+    # initialize the array of p-values for the median percent change
+    MPC_p_values = np.zeros(num_trials)
+
+    # for each trial:
+    for trial_index in range(num_trials):
+
+        # calculate the statistical significance for the 50% responder rate
+        [_, RR50_p_values[trial_index] ] = \
+            stats.fisher_exact( [ [placebo_num_50_responders[trial_index] , num_patients_per_arm - placebo_num_50_responders[trial_index]], 
+                                  [drug_num_50_responders[trial_index]    , num_patients_per_arm - drug_num_50_responders[trial_index]   ] ] )
+
+        # calculate the statistical significance for median percent change
+        [_, MPC_p_values[trial_index] ] = \
+            stats.ranksums(placebo_percent_changes[trial_index, :], drug_percent_changes[trial_index, :])
+
+    return [RR50_p_values, MPC_p_values]
 
 
 def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta, 
@@ -796,6 +909,18 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
 
             (1D Numpy array) - array of median percent changes from drug arm of all N (N = num_trials) trials
 
+        13) RR50_p_values:
+        
+            (1D Numpy array) - array of p-values for the 50% responder rates from each trial, as
+
+                               as according to the Fisher Exact Test 
+
+        14) MPC_p_values:
+
+            (1D Numpy array) - array of p-values for the median percent changes from each trial, as
+
+                               as according to the Wilcoxon Signed Rank Test
+
     '''
     
     # calculate the upper bound on the 95% confidence interval for the normally distributed drug efficacy
@@ -811,7 +936,8 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
         if( upper_confidence_bound_placebo <= 1):
     
             # calculate the endpoint statistics for the placebo arm
-            [placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std, placebo_RR50_array, placebo_MPC_array] = \
+            [placebo_RR50_mean,         placebo_RR50_std,        placebo_MPC_mean,   placebo_MPC_std, 
+             placebo_num_50_responders, placebo_percent_changes, placebo_RR50_array, placebo_MPC_array] = \
                 calculate_endpoint_statistics(shape, scale, alpha, beta, 
                                               placebo_effect_mu, placebo_effect_sigma,
                                               drug_effect_mu, drug_effect_sigma, False,
@@ -819,16 +945,24 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
                                               time_scale_conversion, min_required_baseline_seizure_count, num_trials)
 
             # calculate the endpoint statistics for the drug arm
-            [drug_RR50_mean, drug_RR50_std, drug_MPC_mean, drug_MPC_std, drug_RR50_array, drug_MPC_array] = \
+            [drug_RR50_mean,         drug_RR50_std,        drug_MPC_mean,   drug_MPC_std, 
+             drug_num_50_responders, drug_percent_changes, drug_RR50_array, drug_MPC_array] = \
                 calculate_endpoint_statistics(shape, scale, alpha, beta, 
                                               placebo_effect_mu, placebo_effect_sigma,
                                               drug_effect_mu, drug_effect_sigma, True,
                                               num_patients_per_arm, num_baseline_intervals, num_testing_intervals, 
                                               time_scale_conversion, min_required_baseline_seizure_count, num_trials)
     
+            # calculate the statistical significance of both endpoints over all trials
+            [RR50_p_values, MPC_p_values] = \
+                calculate_statistical_significances(placebo_num_50_responders, placebo_percent_changes,
+                                                    drug_num_50_responders,    drug_percent_changes,
+                                                    num_trials,                num_patients_per_arm)
+
             return [placebo_RR50_mean,  placebo_RR50_std,  placebo_MPC_mean, placebo_MPC_std,
                     drug_RR50_mean,     drug_RR50_std,     drug_MPC_mean,    drug_MPC_std,
-                    placebo_RR50_array, placebo_MPC_array, drug_RR50_array,  drug_MPC_array]
+                    placebo_RR50_array, placebo_MPC_array, drug_RR50_array,  drug_MPC_array,
+                    RR50_p_values,      MPC_p_values]
         
         # if the upper bound of the 95% confidence interval for the placebo effect is greater than 1:
         else:
@@ -880,7 +1014,7 @@ def generate_and_store_data(shape, scale, alpha, beta,
                             endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
                             biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_filename,
                             placebo_RR50_array_filename, placebo_MPC_array_filename, drug_RR50_array_filename, drug_MPC_array_filename,
-                            num_patients_per_arm_filename):
+                            num_patients_per_arm_filename, RR50_p_values_filename, MPC_p_values_filename):
     '''
 
     This function generates and stores the data needed to create the histogram of monthly seizure frequencies, the scatter plot
@@ -1034,6 +1168,18 @@ def generate_and_store_data(shape, scale, alpha, beta,
             (string) - the file name of the JSON file will store the array of median percent changes from the drug arm
 
                        over all N (N = num_trials) trials
+        
+        28) RR50_p_values_filename:
+
+            (string) - the file name of the JSON file will store the array of p-values for 50% responder rate from 
+            
+                       all trials
+        
+        29) MPC_p_values_filename:
+
+            (string) - the file name of the JSON file will store the array of p-values for median percent change from 
+            
+                       all trials
 
 
     Outputs:
@@ -1045,7 +1191,8 @@ def generate_and_store_data(shape, scale, alpha, beta,
     # calculate the endpoint statistics under given RCT design parameters
     [placebo_RR50_mean,  placebo_RR50_std,  placebo_MPC_mean, placebo_MPC_std,
      drug_RR50_mean,     drug_RR50_std,     drug_MPC_mean,    drug_MPC_std,
-     placebo_RR50_array, placebo_MPC_array, drug_RR50_array,  drug_MPC_array] = \
+     placebo_RR50_array, placebo_MPC_array, drug_RR50_array,  drug_MPC_array,
+     RR50_p_values,      MPC_p_values] = \
         calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta, 
                                                            placebo_effect_mu, placebo_effect_sigma,
                                                            drug_effect_mu, drug_effect_sigma, 
@@ -1099,6 +1246,12 @@ def generate_and_store_data(shape, scale, alpha, beta,
     # store the number of patients generated per trial arm
     store_data_as_list_in_json_file(num_patients_per_arm, num_patients_per_arm_filename)
 
+    # store the array of p-values for the 50% responder rate
+    store_data_as_list_in_json_file(RR50_p_values.tolist(), RR50_p_values_filename)
+
+    # store the array of p-values for the median percent change
+    store_data_as_list_in_json_file(MPC_p_values.tolist(), MPC_p_values_filename)
+
 
 if (__name__ == '__main__'):
 
@@ -1148,6 +1301,8 @@ if (__name__ == '__main__'):
     drug_RR50_array_filename = 'drug_RR50_array'
     drug_MPC_array_filename = 'drug_MPC_array'
     num_patients_per_arm_filename = 'num_patients_per_arm'
+    RR50_p_values_filename = 'RR50_p_values'
+    MPC_p_values_filename = 'MPC_p_values'
     
 
     start_time_in_seconds = time.time()
@@ -1159,7 +1314,7 @@ if (__name__ == '__main__'):
                             endpoint_statistics_filename, log_log_histogram_numbers_filename, monthly_seizure_frequencies_filename, 
                             biweekly_log10means_filename, biweekly_log10stds_filename, patient_population_weekly_seizure_counts_filename,
                             placebo_RR50_array_filename, placebo_MPC_array_filename, drug_RR50_array_filename, drug_MPC_array_filename,
-                            num_patients_per_arm_filename)
+                            num_patients_per_arm_filename, RR50_p_values_filename, MPC_p_values_filename)
 
     stop_time_in_seconds = time.time()
     total_time_in_seconds = stop_time_in_seconds - start_time_in_seconds
