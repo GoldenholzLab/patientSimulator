@@ -699,7 +699,7 @@ def calculate_endpoint_statistics(shape, scale, alpha, beta,
     return [RR50_mean, RR50_std, MPC_mean, MPC_std, num_50_responders_per_trial, percent_changes_per_trial, RR50_array, MPC_array]
 
 
-def calculate_statistical_significances(placebo_num_50_responders, placebo_percent_changes,
+def calculate_p_values(placebo_num_50_responders, placebo_percent_changes,
                                  drug_num_50_responders,    drug_percent_changes,
                                  num_trials,                num_patients_per_arm):
     '''
@@ -966,7 +966,7 @@ def calculate_placebo_and_drug_arm_endpoint_statistics(shape, scale, alpha, beta
     
             # calculate the statistical significance of both endpoints over all trials
             [RR50_p_values, MPC_p_values] = \
-                calculate_statistical_significances(placebo_num_50_responders, placebo_percent_changes,
+                calculate_p_values(placebo_num_50_responders, placebo_percent_changes,
                                                     drug_num_50_responders,    drug_percent_changes,
                                                     num_trials,                num_patients_per_arm)
 
