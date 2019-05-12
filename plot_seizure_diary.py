@@ -101,6 +101,11 @@ def plot_patient(patient_weekly_seizure_counts):
 if(__name__ == '__main__'):
     
     # the file name of the JSON file containing the entire synthetic patient population
+    '''
+    
+    For current data, this should be 240
+
+    '''
     patient_population_weekly_seizure_counts_file_name = 'synthetic_patient_population'
 
     # take the ID number of the patient to be plotted from the command line

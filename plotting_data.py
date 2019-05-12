@@ -274,7 +274,7 @@ def plot_l_relationship(log_log_slope, log_log_intercept, r_value, biweekly_log1
     # format log-log plot
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
-    long_title = '2-week seizure count of ' + str( num_patients ) + ' patients'
+    long_title = '2-week seizure count of ' + str( num_patients ) + ' simulated patients'
     formatted_title = '\n'.join(textwrap.wrap(long_title, 40))
     plt.title(formatted_title, fontsize = 14)
     plt.legend(['Line of best fit, slope: ' + str( np.round(log_log_slope, 3) ) + ', R^2 = ' + str( np.round(r_value**2, 3) ), 'target line, slope: 0.7','Individual patient'], fontsize = 12)
@@ -316,7 +316,7 @@ def plot_histogram(median_monthly_seizure_frequency, monthly_seizure_frequencies
     plt.yticks(fontsize = 14)
     plt.axvline(x=median_monthly_seizure_frequency, color='k', linestyle='-')
     plt.axvline(x=2.7, color='r', linestyle='--')
-    plt.legend(['median: ' + str( np.round(median_monthly_seizure_frequency, 2) ), 'target median:2.7'], fontsize = 12)
+    plt.legend(['median: ' + str( np.round(median_monthly_seizure_frequency, 1) ), 'target median: 2.7'], fontsize = 12)
     long_title = 'Histogram of monthly seizure frequencies (' + str( num_patients ) + ' simulated patients)'
     formatted_title = '\n'.join(textwrap.wrap(long_title, 40))
     plt.title(formatted_title, fontsize = 14)

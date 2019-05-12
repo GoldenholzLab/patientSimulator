@@ -221,7 +221,7 @@ def plot_trial_endpoints(placebo_RR50, placebo_MPC, drug_RR50, drug_MPC, RR50_p_
     ax1.set_yticklabels([0, 10, 20, 30, 40, 50, 60], fontsize = 14)
     ax1.set_ylim([0, 80])
     ax1.set_ylabel('Percentage of 50% Responders', fontsize = 14)
-    longTitle = '50% Responder Rate Results of One Trial (p' + str( np.round( RR50_p_value, p_value_decimal_round ) ) + ')'
+    longTitle = '50% Responder Rate Results of One Trial (p = ' + str( np.round( RR50_p_value, p_value_decimal_round ) ) + ')'
     formatted_title = '\n'.join(textwrap.wrap(longTitle, 40))
     ax1.set_title(formatted_title, fontsize = 14)
     for rect in rects1:
@@ -235,7 +235,7 @@ def plot_trial_endpoints(placebo_RR50, placebo_MPC, drug_RR50, drug_MPC, RR50_p_
     ax2.set_yticklabels([0, 10, 20, 30, 40, 50, 60], fontsize = 14)
     ax2.set_ylim([0, 80])
     ax2.set_ylabel('Median Percentage Change', fontsize = 14)
-    longTitle = 'Median Percentage Change Results of One Trial (p' + str( np.round( MPC_p_value, p_value_decimal_round ) ) + ')'
+    longTitle = 'Median Percentage Change Results of One Trial (p = ' + str( np.round( MPC_p_value, p_value_decimal_round ) ) + ')'
     formatted_title = '\n'.join(textwrap.wrap(longTitle, 45))
     ax2.set_title(formatted_title, fontsize = 14)
     for rect in rects2:
@@ -257,6 +257,11 @@ def plot_trial_endpoints(placebo_RR50, placebo_MPC, drug_RR50, drug_MPC, RR50_p_
 if(__name__ == '__main__'):
 
     # take the ID number of the trial to be plotted from the command line
+    '''
+    
+    For current data, this should be 26
+
+    '''
     trial_ID_num = int(sys.argv[1])
 
     # the file names of the JSON files that all the data points of the JSON files are stored in
@@ -272,7 +277,7 @@ if(__name__ == '__main__'):
     endpoint_decimal_round = 1
 
     # the number of decimal places to round the p-values too
-    p_value_decimal_round = 2
+    p_value_decimal_round = 3
 
     # load all the relevant data points
     [placebo_RR50, placebo_MPC, drug_RR50, drug_MPC, RR50_p_value, MPC_p_value, num_patients_per_arm] = \
