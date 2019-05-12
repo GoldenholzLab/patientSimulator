@@ -226,8 +226,8 @@ def plot_trial_endpoints(placebo_RR50, placebo_MPC, drug_RR50, drug_MPC, RR50_p_
     ax1.set_title(formatted_title, fontsize = 14)
     for rect in rects1:
         height = rect.get_height()
-        ax1.text(rect.get_x() + rect.get_width()/2, 1.05*height, '%g'%np.round(height, endpoint_decimal_round), ha = 'center', va = 'bottom', fontsize = 14)
-        
+        ax1.text(rect.get_x() + rect.get_width()/2, 1.05*height, '%r'%np.round(height, endpoint_decimal_round), ha = 'center', va = 'bottom', fontsize = 14)
+    
     # Plot the Median Percent Change in the usual way that other RCT papers graph it
     rects2 = ax2.bar(['drug (' + str( num_patients_per_arm ) + ' patients)', 'placebo (' + str( num_patients_per_arm ) + ' patients)'], 
                       [drug_MPC, placebo_MPC], color = 'k')
@@ -240,7 +240,7 @@ def plot_trial_endpoints(placebo_RR50, placebo_MPC, drug_RR50, drug_MPC, RR50_p_
     ax2.set_title(formatted_title, fontsize = 14)
     for rect in rects2:
         height = rect.get_height()
-        ax2.text(rect.get_x() + rect.get_width()/2, 1.05*height, '%g'%np.round(height, endpoint_decimal_round), ha = 'center', va = 'bottom', fontsize = 14)
+        ax2.text(rect.get_x() + rect.get_width()/2, 1.05*height, '%r'%np.round(height, endpoint_decimal_round), ha = 'center', va = 'bottom', fontsize = 14)
     
     left  = -0.4  # the left side of the subplots of the figure
     right = 1.3    # the right side of the subplots of the figure
