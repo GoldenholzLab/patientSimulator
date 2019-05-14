@@ -277,7 +277,7 @@ def plot_l_relationship(log_log_slope, log_log_intercept, r_value, biweekly_log1
     long_title = '2-week seizure count of ' + str( num_patients ) + ' simulated patients'
     formatted_title = '\n'.join(textwrap.wrap(long_title, 40))
     plt.title(formatted_title, fontsize = 14)
-    plt.legend(['Line of best fit, slope: ' + str( np.round(log_log_slope, 3) ) + ', R^2 = ' + str( np.round(r_value**2, 3) ), 'target line, slope: 0.7','Individual patient'], fontsize = 12)
+    plt.legend(['Line of best fit, slope: ' + str( np.round(log_log_slope, 2) ) + ', R$^2$ = ' + str( np.round(r_value**2, 2) ), 'target line, slope: 0.70','Individual patient'], fontsize = 12)
     plt.xlabel('log10(mean)', fontsize = 14)
     plt.ylabel('log10(std.dev)', fontsize = 14)
     plt.gray()
