@@ -5,6 +5,8 @@ from matplotlib.ticker import MaxNLocator
 import textwrap
 import sys
 import os
+from PIL import Image
+import io
 
 '''
 
@@ -95,7 +97,13 @@ def plot_patient(patient_weekly_seizure_counts):
     long_title = 'One patient\'s weekly seizure counts over ' + str(numWeeks) + ' weeks'
     formatted_title = '\n'.join(textwrap.wrap(long_title, 40))
     plt.title(formatted_title, fontsize = 14)
-    fig.savefig(fname = os.getcwd() + '/Romero-fig3', dpi = 600, bbox_inches = 'tight')
+
+    # save as picture as TIFF file
+    png1 = io.BytesIO()
+    fig.savefig(png1, dpi = 600, bbox_inches = 'tight', format='png')
+    png2 = Image.open(png1)
+    png2.save('Romero-fig3.tiff')
+    png1.close()
 
 
 if(__name__ == '__main__'):

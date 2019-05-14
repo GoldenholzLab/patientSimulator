@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import os
 import json
 import textwrap
+from PIL import Image
+import io
 
 '''
 
@@ -256,7 +258,7 @@ def plot_l_relationship(log_log_slope, log_log_intercept, r_value, biweekly_log1
     # add points on log-log plot
     fig = plt.figure(1)
     ax = fig.gca()
-    plt.scatter(biweekly_log10means, biweekly_log10stds, s = 0.5,  color = 'tab:cyan')
+    plt.scatter(biweekly_log10means, biweekly_log10stds, s = 0.5,  color = 'silver')
     plt.xlim([-0.4, 0.6])
     plt.ylim([-.4, 1])
 
@@ -264,12 +266,12 @@ def plot_l_relationship(log_log_slope, log_log_intercept, r_value, biweekly_log1
     ax1 = plt.gca()
     x_vals = np.array(ax1.get_xlim())
     y_vals = log_log_intercept + log_log_slope * x_vals
-    plt.plot(x_vals, y_vals, marker=',', color = 'k', linestyle = '-')
+    plt.plot(x_vals, y_vals, marker=',', color = 'k', linestyle = '--')
 
     # calculate and add ideal line
     x_vals = np.array(ax1.get_xlim())
     y_vals = log_log_intercept + 0.7 * x_vals
-    plt.plot(x_vals, y_vals, color = 'r', linestyle = '--')
+    plt.plot(x_vals, y_vals, color = 'dimgray', linestyle = '-')
 
     # format log-log plot
     plt.xticks(fontsize = 14)
@@ -281,7 +283,12 @@ def plot_l_relationship(log_log_slope, log_log_intercept, r_value, biweekly_log1
     plt.xlabel('log10(mean)', fontsize = 14)
     plt.ylabel('log10(std.dev)', fontsize = 14)
     plt.gray()
-    fig.savefig(fname = os.getcwd() + '/Romero-fig2', dpi = 600, bbox_inches = 'tight')
+
+    png1 = io.BytesIO()
+    fig.savefig(png1, dpi = 600, bbox_inches = 'tight', format='png')
+    png2 = Image.open(png1)
+    png2.save('Romero-fig2.tiff')
+    png1.close()
 
 
 def plot_histogram(median_monthly_seizure_frequency, monthly_seizure_frequencies):
@@ -311,11 +318,11 @@ def plot_histogram(median_monthly_seizure_frequency, monthly_seizure_frequencies
 
     # create histogram
     fig = plt.figure(2)
-    [data, bins, _] = plt.hist(monthly_seizure_frequencies, bins='auto', density=True, color = 'tab:cyan')
+    [data, bins, _] = plt.hist(monthly_seizure_frequencies, bins='auto', density=True, color = 'darkgrey')
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
     plt.axvline(x=median_monthly_seizure_frequency, color='k', linestyle='-')
-    plt.axvline(x=2.7, color='r', linestyle='--')
+    plt.axvline(x=2.7, color='k', linestyle='--')
     plt.legend(['median: ' + str( np.round(median_monthly_seizure_frequency, 1) ), 'target median: 2.7'], fontsize = 12)
     long_title = 'Histogram of monthly seizure frequencies (' + str( num_patients ) + ' simulated patients)'
     formatted_title = '\n'.join(textwrap.wrap(long_title, 40))
@@ -325,7 +332,12 @@ def plot_histogram(median_monthly_seizure_frequency, monthly_seizure_frequencies
     formatted_y_label = '\n'.join(textwrap.wrap(long_y_label, 30))
     plt.ylabel(formatted_y_label, fontsize = 14)
     plt.gray()
-    fig.savefig(fname = os.getcwd() + '/Romero-fig1', dpi = 600, bbox_inches = 'tight')
+
+    png1 = io.BytesIO()
+    fig.savefig(png1, dpi = 600, bbox_inches = 'tight', format='png')
+    png2 = Image.open(png1)
+    png2.save('Romero-fig1.tiff')
+    png1.close()
 
 
 def plot_endpoint_responses(placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mean, placebo_MPC_std,
@@ -423,8 +435,8 @@ def plot_endpoint_responses(placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mea
     
     [fig, ax] = plt.subplots()
     
-    simulated_rects = ax.barh(np.array(y) + separation, simulated_data, height = heights, xerr=simulated_std_bars, label = 'simulated')
-    historical_rects = ax.barh(np.array(y) - separation, historical_data, height = heights, xerr=historical_std_bars, label = 'historical')
+    simulated_rects = ax.barh(np.array(y) + separation, simulated_data, height = heights, xerr=simulated_std_bars, label = 'simulated', color='dimgrey')
+    historical_rects = ax.barh(np.array(y) - separation, historical_data, height = heights, xerr=historical_std_bars, label = 'historical', color='silver')
     
     i = 0
     for rect in simulated_rects:
@@ -448,7 +460,11 @@ def plot_endpoint_responses(placebo_RR50_mean, placebo_RR50_std, placebo_MPC_mea
     plt.legend()
     plt.tight_layout()
 
-    fig.savefig(fname = os.getcwd() + '/Romero-fig4', dpi = 600, bbox_inches = 'tight')
+    png1 = io.BytesIO()
+    fig.savefig(png1, dpi = 600, bbox_inches = 'tight', format='png')
+    png2 = Image.open(png1)
+    png2.save('Romero-fig4.tiff')
+    png1.close()
 
 
 if (__name__ == '__main__'):

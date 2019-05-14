@@ -8,6 +8,8 @@ __pycache__/
 
 # ingore pictures
 *.png
+*.tiff
+*.tif
 
 # ignore apple files
 *.DS_Store

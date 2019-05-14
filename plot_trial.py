@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import os
 import textwrap
 import sys
+from PIL import Image
+import io
 
 '''
 
@@ -251,7 +253,11 @@ def plot_trial_endpoints(placebo_RR50, placebo_MPC, drug_RR50, drug_MPC, RR50_p_
     
     plt.subplots_adjust(left=left, bottom=bottom, right=right, top=top, wspace=wspace, hspace=hspace)
     
-    fig.savefig(fname = os.getcwd() + '/Romero-fig5.png', dpi = 600, bbox_inches = 'tight')
+    png1 = io.BytesIO()
+    fig.savefig(png1, dpi = 600, bbox_inches = 'tight', format='png')
+    png2 = Image.open(png1)
+    png2.save('Romero-fig5.tiff')
+    png1.close()
 
 
 if(__name__ == '__main__'):
