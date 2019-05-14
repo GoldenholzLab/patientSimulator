@@ -772,35 +772,6 @@ if (__name__ == '__main__'):
 
     output_folder = arg_array[21]
     
-    ''''
-    shape_lower_Boundary_init = 10
-    shape_upper_Boundary_init = 50
-    scale_lower_Boundary_init = 180
-    scale_upper_Boundary_init = 220
-    alpha_lower_Boundary_init = 140
-    alpha_upper_Boundary_init = 180
-    beta_lower_Boundary_init = 80
-    beta_upper_Boundary_init = 120
-    
-    shape_delta = 1
-    scale_delta = 1
-    alpha_delta = 1
-    beta_delta = 1
-    
-    target_median = 2.7
-    target_slope = 0.7
-    num_iter = 30
-    max_iter = 1
-    num_patients_per_iter = 1000
-    decimal_precision = 3
-    
-    max_tolerable_error_dB = -30
-    max_tolerable_error = np.power(10, max_tolerable_error_dB/10)
-    
-    journey_flag = True
-    output_file_name = 'simulation_output.txt'
-    '''
-    
     central_point_deltas = (shape_delta, scale_delta, alpha_delta, beta_delta)
     target_values = [target_median, target_slope]
     init_param_boundaries = [[shape_lower_Boundary_init, shape_upper_Boundary_init],
