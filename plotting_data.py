@@ -271,7 +271,7 @@ def plot_l_relationship(log_log_slope, log_log_intercept, r_value, biweekly_log1
     # calculate and add ideal line
     x_vals = np.array(ax1.get_xlim())
     y_vals = log_log_intercept + 0.7 * x_vals
-    plt.plot(x_vals, y_vals, color = 'dimgray', linestyle = '-')
+    plt.plot(x_vals, y_vals, color = 'k', linestyle = '-')
 
     # format log-log plot
     plt.xticks(fontsize = 14)

@@ -197,13 +197,23 @@ def get_patient_statistical_features(shape, scale, alpha, beta,
         months.append(patient_weekly_seizure_counts[y]+patient_weekly_seizure_counts[y+1]+patient_weekly_seizure_counts[y+2]+patient_weekly_seizure_counts[y+3])
     patient_monthly_seizure_counts = np.array(months)
 
-    # calculate the base 10 logarithm of the biweekly seizure count mean
-    biweekly_log10mean = np.log10(np.mean(patient_biweekly_seizure_counts))
+    # calculate the biweekly seizure count mean and the biweekly seizure count standard deviation
+    biweekly_sz_count_mean = np.mean(patient_biweekly_seizure_counts)
+    biweekly_sz_count_std_dev = np.std(patient_biweekly_seizure_counts)
 
-    # calculate the base 10 logarithm of the biweekly seizure count mean
-    biweekly_log10std = np.log10(np.std(patient_biweekly_seizure_counts))
+    if(biweekly_sz_count_mean == 0):
 
-    # calculate the omnthly seizure count mean
+        biweekly_sz_count_mean = 0.0000001
+
+    if(biweekly_sz_count_std_dev == 0):
+
+        biweekly_sz_count_std_dev = 0.0000001
+
+    # calculate the base 10 logarithms of the biweekly seizure count mean and the biweekly seizure count standard deviation
+    biweekly_log10mean = np.log10(biweekly_sz_count_mean)
+    biweekly_log10std = np.log10(biweekly_sz_count_std_dev)
+
+    # calculate the monthly seizure count mean
     monthly_seizure_frequency = np.mean(patient_monthly_seizure_counts)
     
     return [biweekly_log10mean, biweekly_log10std, monthly_seizure_frequency, patient_weekly_seizure_counts]
