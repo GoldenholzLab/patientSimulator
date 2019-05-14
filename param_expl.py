@@ -198,9 +198,9 @@ def probeParameterSpaceLocation(point, num_iter, num_patients_per_iter):
     while((counter < num_iter) and (could_be_probed)):
         
         # try to generate an observation
-        [current_median, current_slope] = \
-            get_patient_population_statistical_features(shape, scale, alpha, beta, 
-                                                        8, 12, num_patients_per_iter)
+        [current_median, current_slope, _, _, _, _, _, _] = \
+            data_generation.get_patient_population_statistical_features(shape, scale, alpha, beta, 
+                                                                        8, 12, num_patients_per_iter)
             
         # if this attempt failed
         if((current_median == None) or (current_slope == None)):
