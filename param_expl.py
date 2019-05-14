@@ -10,7 +10,7 @@ and a log-log slope that are close to the target values.
 
 import numpy as np
 import pandas as pd
-import generation
+import data_generation
 import time
 import argparse
 
@@ -198,7 +198,9 @@ def probeParameterSpaceLocation(point, num_iter, num_patients_per_iter):
     while((counter < num_iter) and (could_be_probed)):
         
         # try to generate an observation
-        [current_median, current_slope] = generation.generateData(num_patients_per_iter, shape, scale, alpha, beta)
+        [current_median, current_slope] = \
+            get_patient_population_statistical_features(shape, scale, alpha, beta, 
+                                                        8, 12, num_patients_per_iter)
             
         # if this attempt failed
         if((current_median == None) or (current_slope == None)):
@@ -722,8 +724,6 @@ def algorithm(init_param_boundaries, central_point_deltas, decimal_precision, nu
         output_file.write( 'minimum cost: ' + str(min_error) + ', point: ' + str(central_point) )
 
 
-# this if-statement is the main body of this script: it takes inputs from the command line
-# arguments and uses them to initialize the 
 if (__name__ == '__main__'):
     
     # extract the array which has the command
