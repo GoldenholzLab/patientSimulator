@@ -1,7 +1,7 @@
 # patientSimulator
 synthetic patient seizure diary simulator and RCT simulator
 
-WHAT IS THIS REPOSITORY FOR?:
+The purpose of this repository:
 
     This repository is meant for providing access to the code which implemented the mathematical model presented in the 
     Seizure Diary Simulator paper.
