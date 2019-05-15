@@ -12,12 +12,6 @@ In order to generate one patient:
     but essentially, you have to eenter the NV model parameters along with the lengths of the baseline and testing period 
     (the baseline period can be made to have a length of zero if need be).
 
-
-In order to generate one trial:
-
-    TODO
-
-
 In order to generate the graphs associated with the Seizure Diary Simulator paper:
 
     Run these scripts from the command line with the following commands in this order:
